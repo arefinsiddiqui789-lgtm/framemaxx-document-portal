@@ -5,7 +5,30 @@ export async function exportToPdf(
   // Dynamic import to avoid SSR issues - html2pdf.js requires browser APIs
   const html2pdf = (await import("html2pdf.js")).default;
 
-  // 50px ≈ 13.23mm at 96 DPI — matching the A4 container padding
+  // Clone the element into a temporary off-screen container at full size
+  // This avoids issues with CSS transforms (zoom) and overflow:hidden on the original
+  const wrapper = document.createElement("div");
+  wrapper.style.position = "fixed";
+  wrapper.style.left = "-9999px";
+  wrapper.style.top = "0";
+  wrapper.style.zIndex = "-1";
+
+  const clone = element.cloneNode(true) as HTMLElement;
+  // Reset transform and set to exact A4 pixel size
+  clone.style.transform = "none";
+  clone.style.width = "794px";
+  clone.style.height = "1123px";
+  clone.style.overflow = "hidden";
+  clone.style.padding = "50px";
+  clone.style.boxSizing = "border-box";
+  clone.style.background = "white";
+  clone.style.margin = "0";
+
+  wrapper.appendChild(clone);
+  document.body.appendChild(wrapper);
+
+  // A4 at 96 DPI: 210mm × 297mm = 794px × 1123px
+  // 50px padding ≈ 13.23mm
   const marginMM = 13;
 
   const opt = {
@@ -18,6 +41,10 @@ export async function exportToPdf(
       letterRendering: true,
       width: 794,
       height: 1123,
+      scrollX: 0,
+      scrollY: 0,
+      windowWidth: 794,
+      windowHeight: 1123,
     },
     jsPDF: {
       unit: "mm",
@@ -27,5 +54,10 @@ export async function exportToPdf(
     pagebreak: { mode: ["avoid-all", "css", "legacy"] },
   };
 
-  await html2pdf().set(opt).from(element).save();
+  try {
+    await html2pdf().set(opt).from(clone).save();
+  } finally {
+    // Clean up the temporary element
+    document.body.removeChild(wrapper);
+  }
 }
