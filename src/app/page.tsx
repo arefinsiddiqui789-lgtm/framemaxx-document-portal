@@ -112,21 +112,14 @@ export default function Home() {
     e?.preventDefault();
     if (passwordInput === "6769") {
       setIsAuthorized(true);
-      localStorage.setItem("fm_auth", "true");
     } else {
       setPasswordError("Incorrect password. Access denied.");
       setTimeout(() => setPasswordError(""), 3000);
     }
   };
 
-  // Check auth on mount
-  useState(() => {
-    if (typeof window !== "undefined") {
-      const auth = localStorage.getItem("fm_auth");
-      if (auth === "true") setIsAuthorized(true);
-    }
-  });
-
+  // Auth check omitted for non-persistence as requested
+  
   const [activeView, setActiveView] = useState<ActiveView>("intake");
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [currentStep, setCurrentStep] = useState(0);
