@@ -41,9 +41,9 @@ const secH: React.CSSProperties = {
   fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1,
   color: gold, marginBottom: 3, paddingBottom: 2, borderBottom: `1px solid ${borderColor}`,
 };
-const row: React.CSSProperties = { display: "flex", marginBottom: 2, fontSize: 11, lineHeight: 1.35 };
-const lbl: React.CSSProperties = { width: 130, fontWeight: 600, color: grayText, flexShrink: 0, fontSize: 11 };
-const para: React.CSSProperties = { fontSize: 11, color: grayText, lineHeight: 1.4, marginBottom: 2 };
+const row: React.CSSProperties = { display: "flex", marginBottom: 2, fontSize: 11, lineHeight: 1.35, textRendering: "geometricPrecision" };
+const lbl: React.CSSProperties = { width: 130, fontWeight: 600, color: grayText, flexShrink: 0, fontSize: 11, textRendering: "geometricPrecision" };
+const para: React.CSSProperties = { fontSize: 11, color: grayText, lineHeight: 1.4, marginBottom: 2, textRendering: "geometricPrecision" };
 
 const val = (data: Record<string, string | boolean>, key: string, fallback = ""): string => {
   const v = data[key];
@@ -146,7 +146,7 @@ function contractRender(data: Record<string, string | boolean>) {
   const showPayment = hasAny(data, ["totalFee", "paymentSchedule"]);
   const showTimeline = hasAny(data, ["startDate", "completionDate"]);
   return (
-    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11 }}>
+    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11, textRendering: "geometricPrecision", WebkitFontSmoothing: "antialiased" }}>
       <PageHeader title="Web Development Service Agreement" subtitle="Master Service Contract" />
       {showDocInfo && (
         <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 10, color: grayText }}>
@@ -219,7 +219,7 @@ const ndaDefaults: Record<string, string | boolean> = { ndaId: "", effectiveDate
 function ndaRender(data: Record<string, string | boolean>) {
   const showDocInfo = hasAny(data, ["ndaId", "effectiveDate"]);
   return (
-    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11 }}>
+    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11, textRendering: "geometricPrecision", WebkitFontSmoothing: "antialiased" }}>
       <PageHeader title="Non-Disclosure Agreement" subtitle="Confidentiality Agreement" />
       {showDocInfo && (
         <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 10, color: grayText }}>
@@ -321,7 +321,7 @@ function proposalRender(data: Record<string, string | boolean>) {
   const showInvestment = hasAny(data, ["totalCost", "paymentTerms"]);
 
   return (
-    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11 }}>
+    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11, textRendering: "geometricPrecision", WebkitFontSmoothing: "antialiased" }}>
       <PageHeader title="Project Proposal" subtitle="Web Development Services" />
       {showDocInfo && (
         <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 10, color: grayText }}>
@@ -478,7 +478,7 @@ function invoiceRender(data: Record<string, string | boolean>) {
   }
 
   return (
-    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11 }}>
+    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11, textRendering: "geometricPrecision", WebkitFontSmoothing: "antialiased" }}>
       {/* Invoice Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
         <div>
@@ -630,7 +630,7 @@ function projectBriefRender(data: Record<string, string | boolean>) {
   const showFeatures = hasAny(data, ["features", "integrations", "references", "brandColors", "stylePreference"]);
 
   return (
-    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11 }}>
+    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11, textRendering: "geometricPrecision", WebkitFontSmoothing: "antialiased" }}>
       <PageHeader title="Project Brief" subtitle="Client Intake Questionnaire" />
       {showDocInfo && (
         <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 10, color: grayText }}>
@@ -752,7 +752,7 @@ function sowRender(data: Record<string, string | boolean>) {
   if (hasVal(data, "obj4")) objectives.push(`4. ${val(data, "obj4")}`);
 
   return (
-    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11 }}>
+    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11, textRendering: "geometricPrecision", WebkitFontSmoothing: "antialiased" }}>
       <PageHeader title="Scope of Work" subtitle="Statement of Work" />
       {showDocInfo && (
         <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 10, color: grayText }}>
@@ -869,7 +869,7 @@ function changeRequestRender(data: Record<string, string | boolean>) {
   const showApproval = hasAny(data, ["decision", "approvedBy", "approvalDate", "approvalNotes"]);
 
   return (
-    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11 }}>
+    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11, textRendering: "geometricPrecision", WebkitFontSmoothing: "antialiased" }}>
       <PageHeader title="Change Request Form" subtitle="Project Modification Request" />
       {showDocInfo && (
         <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 10, color: grayText }}>
@@ -954,7 +954,7 @@ function privacyTermsRender(data: Record<string, string | boolean>) {
   const effectiveDateStr = hasVal(data, "effectiveDate") ? val(data, "effectiveDate") : "";
 
   return (
-    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 10 }}>
+    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 10, textRendering: "geometricPrecision", WebkitFontSmoothing: "antialiased" }}>
       <PageHeader title="Privacy Policy & Terms of Service" {...(effectiveDateStr ? { subtitle: `Effective: ${effectiveDateStr}` } : {})} />
       {showDocInfo && (
         <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 9, color: grayText }}>

@@ -25,11 +25,13 @@ export async function exportToPdf(
     const opt = {
       margin: [marginMM, marginMM, marginMM, marginMM],
       filename: `${filename}.pdf`,
-      image: { type: "jpeg", quality: 0.98 },
+      image: { type: "jpeg", quality: 1.0 },
       html2canvas: {
-        scale: 2,
+        scale: 3, // Higher scale for better clarity
         useCORS: true,
-        letterRendering: true,
+        letterRendering: false, // Disabling this often fixes character overlap in modern browsers
+        logging: false,
+        imageTimeout: 0,
         width: 794,
         height: 1123,
         scrollX: 0,
@@ -41,6 +43,7 @@ export async function exportToPdf(
         unit: "mm",
         format: "a4",
         orientation: "portrait" as const,
+        compress: true,
       },
       pagebreak: { mode: ["avoid-all", "css", "legacy"] },
     };
