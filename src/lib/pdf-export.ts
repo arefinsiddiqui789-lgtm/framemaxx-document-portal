@@ -1,9 +1,10 @@
-import html2pdf from "html2pdf.js";
-
 export async function exportToPdf(
   element: HTMLElement,
   filename: string
 ): Promise<void> {
+  // Dynamic import to avoid SSR issues - html2pdf.js requires browser APIs
+  const html2pdf = (await import("html2pdf.js")).default;
+
   const opt = {
     margin: [10, 10, 10, 10],
     filename: `${filename}.pdf`,

@@ -744,7 +744,7 @@ export default function Home() {
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.3 }}
               >
-                <DocumentsGallery onBack={() => setActiveView("intake")} />
+                <DocumentsGallery />
               </motion.div>
             )}
           </AnimatePresence>
