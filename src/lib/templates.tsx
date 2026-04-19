@@ -41,9 +41,9 @@ const secH: React.CSSProperties = {
   fontSize: 13, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1.5,
   color: gold, marginBottom: 5, paddingBottom: 4, borderBottom: `1px solid ${borderColor}`,
 };
-const row: React.CSSProperties = { display: "flex", marginBottom: 8, fontSize: 14.5, lineHeight: 1.55, textRendering: "geometricPrecision" };
-const lbl: React.CSSProperties = { width: 170, fontWeight: 600, color: grayText, flexShrink: 0, fontSize: 14.5, textRendering: "geometricPrecision" };
-const para: React.CSSProperties = { fontSize: 14.5, color: grayText, lineHeight: 1.65, marginBottom: 5, textRendering: "geometricPrecision" };
+const row: React.CSSProperties = { display: "flex", marginBottom: 8, fontSize: 13.75, lineHeight: 1.5, textRendering: "geometricPrecision" };
+const lbl: React.CSSProperties = { width: 170, fontWeight: 600, color: grayText, flexShrink: 0, fontSize: 13.75, textRendering: "geometricPrecision" };
+const para: React.CSSProperties = { fontSize: 13.75, color: grayText, lineHeight: 1.6, marginBottom: 5, textRendering: "geometricPrecision" };
 
 const val = (data: Record<string, string | boolean>, key: string, fallback = ""): string => {
   const v = data[key];
@@ -219,7 +219,7 @@ const ndaDefaults: Record<string, string | boolean> = { ndaId: "", effectiveDate
 function ndaRender(data: Record<string, string | boolean>) {
   const showDocInfo = hasAny(data, ["ndaId", "effectiveDate"]);
   return (
-    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 14.5, textRendering: "geometricPrecision", WebkitFontSmoothing: "antialiased" }}>
+    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 13.75, textRendering: "geometricPrecision", WebkitFontSmoothing: "antialiased" }}>
       <PageHeader title="Non-Disclosure Agreement" subtitle="Confidentiality Agreement" />
       {showDocInfo && (
         <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 10, color: grayText }}>
@@ -321,7 +321,7 @@ function proposalRender(data: Record<string, string | boolean>) {
   const showInvestment = hasAny(data, ["totalCost", "paymentTerms"]);
 
   return (
-    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 14.5, textRendering: "geometricPrecision", WebkitFontSmoothing: "antialiased" }}>
+    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 13.75, textRendering: "geometricPrecision", WebkitFontSmoothing: "antialiased" }}>
       <PageHeader title="Project Proposal" subtitle="Web Development Services" />
       {showDocInfo && (
         <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 10, color: grayText }}>
@@ -478,7 +478,7 @@ function invoiceRender(data: Record<string, string | boolean>) {
   }
 
   return (
-    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 14.5, textRendering: "geometricPrecision", WebkitFontSmoothing: "antialiased" }}>
+    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 13.75, textRendering: "geometricPrecision", WebkitFontSmoothing: "antialiased" }}>
       {/* Invoice Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
         <div>
@@ -532,7 +532,7 @@ function invoiceRender(data: Record<string, string | boolean>) {
               <span style={{ flex: 0.5 }}>#</span><span style={{ flex: 3 }}>Description</span><span style={{ flex: 0.7, textAlign: "center" }}>Qty</span><span style={{ flex: 1.2, textAlign: "right" }}>Rate</span><span style={{ flex: 1.2, textAlign: "right" }}>Amount</span>
             </div>
             {visibleItems.map((it, i) => (
-              <div key={i} style={{ display: "flex", borderBottom: "1px solid #EEE", padding: "12px 0 10px 0", color: grayText, fontSize: 13 }}>
+              <div key={i} style={{ display: "flex", borderBottom: "1px solid #EEE", padding: "12px 0 10px 0", color: grayText, fontSize: 12.5 }}>
                 <span style={{ flex: 0.5 }}>{i + 1}</span><span style={{ flex: 3, color: darkText }}>{it.d}</span><span style={{ flex: 0.7, textAlign: "center" }}>{it.q}</span><span style={{ flex: 1.2, textAlign: "right" }}>{it.r}</span><span style={{ flex: 1.2, textAlign: "right" }}>{it.a}</span>
               </div>
             ))}
@@ -630,7 +630,7 @@ function projectBriefRender(data: Record<string, string | boolean>) {
   const showFeatures = hasAny(data, ["features", "integrations", "references", "brandColors", "stylePreference"]);
 
   return (
-    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 14.5, textRendering: "geometricPrecision", WebkitFontSmoothing: "antialiased" }}>
+    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 13.75, textRendering: "geometricPrecision", WebkitFontSmoothing: "antialiased" }}>
       <PageHeader title="Project Brief" subtitle="Client Intake Questionnaire" />
       {showDocInfo && (
         <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 10, color: grayText }}>
@@ -752,7 +752,7 @@ function sowRender(data: Record<string, string | boolean>) {
   if (hasVal(data, "obj4")) objectives.push(`4. ${val(data, "obj4")}`);
 
   return (
-    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 14.5, textRendering: "geometricPrecision", WebkitFontSmoothing: "antialiased" }}>
+    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 13.75, textRendering: "geometricPrecision", WebkitFontSmoothing: "antialiased" }}>
       <PageHeader title="Scope of Work" subtitle="Statement of Work" />
       {showDocInfo && (
         <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 10, color: grayText }}>
@@ -869,7 +869,7 @@ function changeRequestRender(data: Record<string, string | boolean>) {
   const showApproval = hasAny(data, ["decision", "approvedBy", "approvalDate", "approvalNotes"]);
 
   return (
-    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 14.5, textRendering: "geometricPrecision", WebkitFontSmoothing: "antialiased" }}>
+    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 13.75, textRendering: "geometricPrecision", WebkitFontSmoothing: "antialiased" }}>
       <PageHeader title="Change Request Form" subtitle="Project Modification Request" />
       {showDocInfo && (
         <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 10, color: grayText }}>
@@ -954,7 +954,7 @@ function privacyTermsRender(data: Record<string, string | boolean>) {
   const effectiveDateStr = hasVal(data, "effectiveDate") ? val(data, "effectiveDate") : "";
 
   return (
-    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 13, textRendering: "geometricPrecision", WebkitFontSmoothing: "antialiased" }}>
+    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 12.5, textRendering: "geometricPrecision", WebkitFontSmoothing: "antialiased" }}>
       <PageHeader title="Privacy Policy & Terms of Service" {...(effectiveDateStr ? { subtitle: `Effective: ${effectiveDateStr}` } : {})} />
       {showDocInfo && (
         <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 9, color: grayText }}>
