@@ -50,6 +50,17 @@ const val = (data: Record<string, string | boolean>, key: string, fallback = "")
   return typeof v === "string" ? (v.trim() || fallback) : fallback;
 };
 
+// Check if a data key has a non-empty value
+const hasVal = (data: Record<string, string | boolean>, key: string): boolean => {
+  const v = data[key];
+  return typeof v === "string" && v.trim().length > 0;
+};
+
+// Check if ANY of the given keys have a value
+const hasAny = (data: Record<string, string | boolean>, keys: string[]): boolean => {
+  return keys.some((k) => hasVal(data, k));
+};
+
 function PageHeader({ title, subtitle }: { title: string; subtitle?: string }) {
   return (
     <div style={{ textAlign: "center", paddingBottom: 6, borderBottom: `2px solid ${gold}`, marginBottom: 8 }}>
@@ -80,11 +91,23 @@ function SigBlock({ party }: { party: string }) {
   );
 }
 
+// Field Row - ALWAYS shows (with "—" for empty). Used for static/required fields.
 function FR({ label, value }: { label: string; value: string }) {
   return (
     <div style={row}>
       <span style={lbl}>{label}</span>
       <span style={{ color: value ? darkText : grayText, flexGrow: 1, borderBottom: "1px solid #CCC" }}>{value || "—"}</span>
+    </div>
+  );
+}
+
+// Conditional Field Row - ONLY shows when value is non-empty
+function CFR({ label, value }: { label: string; value: string }) {
+  if (!value || !value.trim()) return null;
+  return (
+    <div style={row}>
+      <span style={lbl}>{label}</span>
+      <span style={{ color: darkText, flexGrow: 1, borderBottom: "1px solid #CCC" }}>{value}</span>
     </div>
   );
 }
@@ -118,34 +141,50 @@ const contractDefaults: Record<string, string | boolean> = {
 };
 
 function contractRender(data: Record<string, string | boolean>) {
+  const showDocInfo = hasAny(data, ["contractId", "date"]);
+  const showClient = hasAny(data, ["clientName", "clientBusiness", "clientEmail", "clientPhone"]);
+  const showPayment = hasAny(data, ["totalFee", "paymentSchedule"]);
+  const showTimeline = hasAny(data, ["startDate", "completionDate"]);
   return (
     <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11 }}>
       <PageHeader title="Web Development Service Agreement" subtitle="Master Service Contract" />
-      <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 10, color: grayText }}>
-        <span>Contract ID: {val(data, "contractId", "[___________]")}</span>
-        <span>Date: {val(data, "date", "[___________]")}</span>
-      </div>
+      {showDocInfo && (
+        <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 10, color: grayText }}>
+          {hasVal(data, "contractId") && <span>Contract ID: {val(data, "contractId")}</span>}
+          {hasVal(data, "date") && <span>Date: {val(data, "date")}</span>}
+        </div>
+      )}
       <div style={sec}>
         <div style={secH}>Parties</div>
         <div style={row}><span style={lbl}>Service Provider:</span><span>FrameMaxx Web Development Agency</span></div>
-        <FR label="Client Name" value={val(data, "clientName")} />
-        <FR label="Client Business" value={val(data, "clientBusiness")} />
-        <FR label="Client Email" value={val(data, "clientEmail")} />
-        <FR label="Client Phone" value={val(data, "clientPhone")} />
+        <CFR label="Client Name" value={val(data, "clientName")} />
+        <CFR label="Client Business" value={val(data, "clientBusiness")} />
+        <CFR label="Client Email" value={val(data, "clientEmail")} />
+        <CFR label="Client Phone" value={val(data, "clientPhone")} />
       </div>
       <div style={sec}><div style={secH}>1. Scope of Services</div><p style={para}>FrameMaxx agrees to provide web development services as described in the attached Statement of Work, including design, development, testing, and deployment.</p></div>
-      <div style={sec}>
-        <div style={secH}>2. Payment Terms</div>
-        <FR label="Total Project Fee" value={val(data, "totalFee")} />
-        <FR label="Payment Schedule" value={val(data, "paymentSchedule")} />
-        <p style={para}>Invoices due within 15 business days. Late payments subject to 1.5% monthly interest.</p>
-      </div>
-      <div style={sec}>
-        <div style={secH}>3. Timeline & Deliverables</div>
-        <FR label="Start Date" value={val(data, "startDate")} />
-        <FR label="Est. Completion" value={val(data, "completionDate")} />
-        <p style={para}>Timelines are estimates, subject to client feedback delays and scope changes.</p>
-      </div>
+      {showPayment && (
+        <div style={sec}>
+          <div style={secH}>2. Payment Terms</div>
+          <CFR label="Total Project Fee" value={val(data, "totalFee")} />
+          <CFR label="Payment Schedule" value={val(data, "paymentSchedule")} />
+          <p style={para}>Invoices due within 15 business days. Late payments subject to 1.5% monthly interest.</p>
+        </div>
+      )}
+      {!showPayment && (
+        <div style={sec}><div style={secH}>2. Payment Terms</div><p style={para}>Invoices due within 15 business days. Late payments subject to 1.5% monthly interest.</p></div>
+      )}
+      {showTimeline && (
+        <div style={sec}>
+          <div style={secH}>3. Timeline & Deliverables</div>
+          <CFR label="Start Date" value={val(data, "startDate")} />
+          <CFR label="Est. Completion" value={val(data, "completionDate")} />
+          <p style={para}>Timelines are estimates, subject to client feedback delays and scope changes.</p>
+        </div>
+      )}
+      {!showTimeline && (
+        <div style={sec}><div style={secH}>3. Timeline & Deliverables</div><p style={para}>Timelines are estimates, subject to client feedback delays and scope changes.</p></div>
+      )}
       <div style={sec}><div style={secH}>4. Intellectual Property</div><p style={para}>Upon full payment, Client receives ownership of custom code and design assets. FrameMaxx retains right to use generic libraries.</p></div>
       <div style={sec}><div style={secH}>5. Confidentiality</div><p style={para}>Both parties agree to maintain confidentiality of proprietary information. Obligation survives termination for 2 years.</p></div>
       <div style={sec}><div style={secH}>6. Revisions & Changes</div><p style={para}>Scope includes up to 2 rounds of revisions per deliverable. Additional changes require a Change Request Form.</p></div>
@@ -178,19 +217,22 @@ const ndaFields: FieldGroup[] = [
 const ndaDefaults: Record<string, string | boolean> = { ndaId: "", effectiveDate: "", receivingParty: "", receivingTitle: "", duration: "" };
 
 function ndaRender(data: Record<string, string | boolean>) {
+  const showDocInfo = hasAny(data, ["ndaId", "effectiveDate"]);
   return (
     <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11 }}>
       <PageHeader title="Non-Disclosure Agreement" subtitle="Confidentiality Agreement" />
-      <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 10, color: grayText }}>
-        <span>NDA ID: {val(data, "ndaId", "[___________]")}</span>
-        <span>Effective Date: {val(data, "effectiveDate", "[___________]")}</span>
-      </div>
+      {showDocInfo && (
+        <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 10, color: grayText }}>
+          {hasVal(data, "ndaId") && <span>NDA ID: {val(data, "ndaId")}</span>}
+          {hasVal(data, "effectiveDate") && <span>Effective Date: {val(data, "effectiveDate")}</span>}
+        </div>
+      )}
       <div style={sec}>
         <div style={secH}>Parties</div>
         <p style={para}>This Agreement is entered into by and between:</p>
         <div style={row}><span style={lbl}>Disclosing Party:</span><span>FrameMaxx Web Development Agency</span></div>
-        <FR label="Receiving Party" value={val(data, "receivingParty")} />
-        <FR label="Title / Role" value={val(data, "receivingTitle")} />
+        <CFR label="Receiving Party" value={val(data, "receivingParty")} />
+        <CFR label="Title / Role" value={val(data, "receivingTitle")} />
       </div>
       <div style={sec}><div style={secH}>1. Purpose</div><p style={para}>The Parties wish to explore a potential business relationship relating to web development services and may disclose confidential information.</p></div>
       <div style={sec}><div style={secH}>2. Confidential Information</div><p style={para}>&quot;Confidential Information&quot; means all non-public information including: business plans, technical data, trade secrets, software code, design specs, client lists, pricing, and financial data.</p></div>
@@ -198,7 +240,7 @@ function ndaRender(data: Record<string, string | boolean>) {
       <div style={sec}><div style={secH}>4. Exclusions</div><p style={para}>Not confidential if: (a) publicly available; (b) known prior to disclosure; (c) independently developed; (d) rightfully obtained from a third party.</p></div>
       <div style={sec}>
         <div style={secH}>5. Term</div>
-        <FR label="Duration" value={val(data, "duration")} />
+        <CFR label="Duration" value={val(data, "duration")} />
         <p style={para}>Obligations survive for 2 years from disclosure, unless longer period agreed in writing.</p>
       </div>
       <div style={sec}><div style={secH}>6. Return of Information</div><p style={para}>Upon request or termination, promptly return or destroy all Confidential Information and copies.</p></div>
@@ -264,36 +306,71 @@ const proposalDefaults: Record<string, string | boolean> = {
 
 function proposalRender(data: Record<string, string | boolean>) {
   const ms = [
-    { n: val(data, "m1", "[Milestone 1]"), t: val(data, "m1Time", "[Weeks]"), c: val(data, "m1Cost", "[$0]") },
-    { n: val(data, "m2", "[Milestone 2]"), t: val(data, "m2Time", "[Weeks]"), c: val(data, "m2Cost", "[$0]") },
-    { n: val(data, "m3", "[Milestone 3]"), t: val(data, "m3Time", "[Weeks]"), c: val(data, "m3Cost", "[$0]") },
-    { n: val(data, "m4", "[Milestone 4]"), t: val(data, "m4Time", "[Weeks]"), c: val(data, "m4Cost", "[$0]") },
+    { n: val(data, "m1"), t: val(data, "m1Time"), c: val(data, "m1Cost"), hasData: hasVal(data, "m1") || hasVal(data, "m1Time") || hasVal(data, "m1Cost") },
+    { n: val(data, "m2"), t: val(data, "m2Time"), c: val(data, "m2Cost"), hasData: hasVal(data, "m2") || hasVal(data, "m2Time") || hasVal(data, "m2Cost") },
+    { n: val(data, "m3"), t: val(data, "m3Time"), c: val(data, "m3Cost"), hasData: hasVal(data, "m3") || hasVal(data, "m3Time") || hasVal(data, "m3Cost") },
+    { n: val(data, "m4"), t: val(data, "m4Time"), c: val(data, "m4Cost"), hasData: hasVal(data, "m4") || hasVal(data, "m4Time") || hasVal(data, "m4Cost") },
   ];
+  const visibleMs = ms.filter((m) => m.hasData);
+  const showDocInfo = hasAny(data, ["proposalId", "date"]);
+  const showPreparedFor = hasAny(data, ["clientName", "company", "clientEmail"]);
+  const showPreparedBy = hasVal(data, "projectManager");
+  const showProject = hasAny(data, ["projectName", "projectType", "projectDescription"]);
+  const showSolution = hasVal(data, "solution");
+  const showMilestones = visibleMs.length > 0;
+  const showInvestment = hasAny(data, ["totalCost", "paymentTerms"]);
+
   return (
     <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11 }}>
       <PageHeader title="Project Proposal" subtitle="Web Development Services" />
-      <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 10, color: grayText }}>
-        <span>Proposal ID: {val(data, "proposalId", "[___________]")}</span>
-        <span>Date: {val(data, "date", "[___________]")}</span>
-      </div>
-      <div style={sec}><div style={secH}>Prepared For</div><FR label="Client Name" value={val(data, "clientName")} /><FR label="Company" value={val(data, "company")} /><FR label="Email" value={val(data, "clientEmail")} /></div>
-      <div style={sec}><div style={secH}>Prepared By</div><div style={row}><span style={lbl}>Agency:</span><span>FrameMaxx Web Development Agency</span></div><FR label="Project Manager" value={val(data, "projectManager")} /></div>
-      <div style={sec}><div style={secH}>Project Overview</div><FR label="Project Name" value={val(data, "projectName")} /><FR label="Project Type" value={val(data, "projectType")} /><p style={para}>{val(data, "projectDescription", "[Project description]")}</p></div>
-      <div style={sec}><div style={secH}>Proposed Solution</div><p style={para}>{val(data, "solution", "[Technical approach]")}</p></div>
-      <div style={sec}>
-        <div style={secH}>Deliverables & Milestones</div>
-        <div style={{ fontSize: 10, width: "100%" }}>
-          <div style={{ display: "flex", fontWeight: 700, borderBottom: `2px solid ${gold}`, paddingBottom: 2, marginBottom: 2 }}>
-            <span style={{ flex: 0.5 }}>#</span><span style={{ flex: 2 }}>Milestone</span><span style={{ flex: 1 }}>Timeline</span><span style={{ flex: 1 }}>Cost</span>
-          </div>
-          {ms.map((m, i) => (
-            <div key={i} style={{ display: "flex", borderBottom: `1px solid ${borderColor}`, padding: "2px 0", color: grayText, fontSize: 10 }}>
-              <span style={{ flex: 0.5 }}>{i + 1}</span><span style={{ flex: 2 }}>{m.n}</span><span style={{ flex: 1 }}>{m.t}</span><span style={{ flex: 1 }}>{m.c}</span>
-            </div>
-          ))}
+      {showDocInfo && (
+        <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 10, color: grayText }}>
+          {hasVal(data, "proposalId") && <span>Proposal ID: {val(data, "proposalId")}</span>}
+          {hasVal(data, "date") && <span>Date: {val(data, "date")}</span>}
         </div>
-      </div>
-      <div style={sec}><div style={secH}>Investment</div><FR label="Total Project Cost" value={val(data, "totalCost")} /><FR label="Payment Terms" value={val(data, "paymentTerms")} /></div>
+      )}
+      {showPreparedFor && (
+        <div style={sec}>
+          <div style={secH}>Prepared For</div>
+          <CFR label="Client Name" value={val(data, "clientName")} />
+          <CFR label="Company" value={val(data, "company")} />
+          <CFR label="Email" value={val(data, "clientEmail")} />
+        </div>
+      )}
+      <div style={sec}><div style={secH}>Prepared By</div><div style={row}><span style={lbl}>Agency:</span><span>FrameMaxx Web Development Agency</span></div><CFR label="Project Manager" value={val(data, "projectManager")} /></div>
+      {showProject && (
+        <div style={sec}>
+          <div style={secH}>Project Overview</div>
+          <CFR label="Project Name" value={val(data, "projectName")} />
+          <CFR label="Project Type" value={val(data, "projectType")} />
+          {hasVal(data, "projectDescription") && <p style={para}>{val(data, "projectDescription")}</p>}
+        </div>
+      )}
+      {showSolution && (
+        <div style={sec}><div style={secH}>Proposed Solution</div><p style={para}>{val(data, "solution")}</p></div>
+      )}
+      {showMilestones && (
+        <div style={sec}>
+          <div style={secH}>Deliverables & Milestones</div>
+          <div style={{ fontSize: 10, width: "100%" }}>
+            <div style={{ display: "flex", fontWeight: 700, borderBottom: `2px solid ${gold}`, paddingBottom: 2, marginBottom: 2 }}>
+              <span style={{ flex: 0.5 }}>#</span><span style={{ flex: 2 }}>Milestone</span><span style={{ flex: 1 }}>Timeline</span><span style={{ flex: 1 }}>Cost</span>
+            </div>
+            {visibleMs.map((m, i) => (
+              <div key={i} style={{ display: "flex", borderBottom: `1px solid ${borderColor}`, padding: "2px 0", color: grayText, fontSize: 10 }}>
+                <span style={{ flex: 0.5 }}>{i + 1}</span><span style={{ flex: 2 }}>{m.n}</span><span style={{ flex: 1 }}>{m.t}</span><span style={{ flex: 1 }}>{m.c}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      {showInvestment && (
+        <div style={sec}>
+          <div style={secH}>Investment</div>
+          <CFR label="Total Project Cost" value={val(data, "totalCost")} />
+          <CFR label="Payment Terms" value={val(data, "paymentTerms")} />
+        </div>
+      )}
       <PageFooter />
     </div>
   );
@@ -359,53 +436,138 @@ const invoiceDefaults: Record<string, string | boolean> = {
 };
 
 function invoiceRender(data: Record<string, string | boolean>) {
+  // Build items array - only include items where description is filled
   const items = [
-    { d: val(data, "item1Desc", "[Service]"), q: val(data, "item1Qty", "1"), r: val(data, "item1Rate", "$0"), a: val(data, "item1Amount", "$0") },
-    { d: val(data, "item2Desc", "[Service]"), q: val(data, "item2Qty", "1"), r: val(data, "item2Rate", "$0"), a: val(data, "item2Amount", "$0") },
-    { d: val(data, "item3Desc", "[Service]"), q: val(data, "item3Qty", "1"), r: val(data, "item3Rate", "$0"), a: val(data, "item3Amount", "$0") },
+    { d: val(data, "item1Desc"), q: val(data, "item1Qty"), r: val(data, "item1Rate"), a: val(data, "item1Amount"), filled: hasVal(data, "item1Desc") },
+    { d: val(data, "item2Desc"), q: val(data, "item2Qty"), r: val(data, "item2Rate"), a: val(data, "item2Amount"), filled: hasVal(data, "item2Desc") },
+    { d: val(data, "item3Desc"), q: val(data, "item3Qty"), r: val(data, "item3Rate"), a: val(data, "item3Amount"), filled: hasVal(data, "item3Desc") },
   ];
+  const visibleItems = items.filter((it) => it.filled);
+
+  // Section visibility
+  const showInvoiceInfo = hasAny(data, ["invoiceNumber", "date", "dueDate"]);
+  const showFrom = hasAny(data, ["fromAddress", "fromEmail", "fromPhone"]);
+  const showBillTo = hasAny(data, ["clientName", "clientCompany", "clientAddress", "clientEmail"]);
+  const showProject = hasAny(data, ["projectName", "projectId"]);
+  const showLineItems = visibleItems.length > 0;
+  const showTotals = hasAny(data, ["subtotal", "tax", "totalDue"]);
+  const showPayment = hasAny(data, ["bankName", "accountNumber", "routingNumber"]);
+
+  // Build right-side info (invoice #, date, due)
+  const rightInfoLines: React.ReactNode[] = [];
+  if (hasVal(data, "invoiceNumber")) rightInfoLines.push(<div key="inv" style={{ fontWeight: 700, color: darkText, fontSize: 14 }}>#{val(data, "invoiceNumber")}</div>);
+  if (hasVal(data, "date")) rightInfoLines.push(<div key="date">Date: {val(data, "date")}</div>);
+  if (hasVal(data, "dueDate")) rightInfoLines.push(<div key="due">Due: {val(data, "dueDate")}</div>);
+
+  // Build From block
+  const fromLines: React.ReactNode[] = [];
+  if (showFrom) {
+    if (hasVal(data, "fromAddress")) fromLines.push(<span key="addr">{val(data, "fromAddress")}<br /></span>);
+    if (hasVal(data, "fromEmail") && hasVal(data, "fromPhone")) fromLines.push(<span key="emph">{val(data, "fromEmail")} | {val(data, "fromPhone")}</span>);
+    else if (hasVal(data, "fromEmail")) fromLines.push(<span key="em">{val(data, "fromEmail")}</span>);
+    else if (hasVal(data, "fromPhone")) fromLines.push(<span key="ph">{val(data, "fromPhone")}</span>);
+  }
+
+  // Build Bill To block
+  const billToLines: React.ReactNode[] = [];
+  if (showBillTo) {
+    if (hasVal(data, "clientName")) billToLines.push(<strong key="name" style={{ color: darkText }}>{val(data, "clientName")}</strong>);
+    if (hasVal(data, "clientCompany")) billToLines.push(<span key="comp"><br />{val(data, "clientCompany")}</span>);
+    if (hasVal(data, "clientAddress")) billToLines.push(<span key="addr"><br />{val(data, "clientAddress")}</span>);
+    if (hasVal(data, "clientEmail")) billToLines.push(<span key="email"><br />{val(data, "clientEmail")}</span>);
+  }
+
   return (
     <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11 }}>
+      {/* Invoice Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
-        <div><div style={{ fontSize: 9, color: gold, letterSpacing: 3, fontWeight: 700, marginBottom: 2 }}>FRAMEMAXX</div><div style={{ fontSize: 24, fontWeight: 700, color: darkText }}>INVOICE</div></div>
-        <div style={{ textAlign: "right", fontSize: 11, color: grayText }}>
-          <div style={{ fontWeight: 700, color: darkText, fontSize: 14 }}>#{val(data, "invoiceNumber", "[___________]")}</div>
-          <div>Date: {val(data, "date", "[___________]")}</div>
-          <div>Due: {val(data, "dueDate", "[___________]")}</div>
+        <div>
+          <div style={{ fontSize: 9, color: gold, letterSpacing: 3, fontWeight: 700, marginBottom: 2 }}>FRAMEMAXX</div>
+          <div style={{ fontSize: 24, fontWeight: 700, color: darkText }}>INVOICE</div>
         </div>
-      </div>
-      <div style={{ display: "flex", gap: 30, marginBottom: 6 }}>
-        <div style={{ flex: 1 }}><div style={secH}>From</div><div style={{ fontSize: 11, lineHeight: 1.4, color: grayText }}><strong style={{ color: darkText }}>FrameMaxx Web Development Agency</strong><br />{val(data, "fromAddress", "[Address]")}<br />{val(data, "fromEmail", "[Email]")} | {val(data, "fromPhone", "[Phone]")}</div></div>
-        <div style={{ flex: 1 }}><div style={secH}>Bill To</div><div style={{ fontSize: 11, lineHeight: 1.4, color: grayText }}><strong style={{ color: darkText }}>{val(data, "clientName", "[Client]")}</strong><br />{val(data, "clientCompany", "[Company]")}<br />{val(data, "clientAddress", "[Address]")}<br />{val(data, "clientEmail", "[Email]")}</div></div>
-      </div>
-      <div style={sec}><div style={secH}>Project</div><FR label="Project Name" value={val(data, "projectName")} /><FR label="Project ID" value={val(data, "projectId")} /></div>
-      <div style={sec}>
-        <div style={{ fontSize: 10, width: "100%" }}>
-          <div style={{ display: "flex", fontWeight: 700, borderBottom: `2px solid ${gold}`, paddingBottom: 3, marginBottom: 2 }}>
-            <span style={{ flex: 0.5 }}>#</span><span style={{ flex: 3 }}>Description</span><span style={{ flex: 0.7, textAlign: "center" }}>Qty</span><span style={{ flex: 1.2, textAlign: "right" }}>Rate</span><span style={{ flex: 1.2, textAlign: "right" }}>Amount</span>
+        {rightInfoLines.length > 0 && (
+          <div style={{ textAlign: "right", fontSize: 11, color: grayText }}>
+            {rightInfoLines}
           </div>
-          {items.map((it, i) => (
-            <div key={i} style={{ display: "flex", borderBottom: `1px solid ${borderColor}`, padding: "3px 0", color: grayText, fontSize: 10 }}>
-              <span style={{ flex: 0.5 }}>{i + 1}</span><span style={{ flex: 3 }}>{it.d}</span><span style={{ flex: 0.7, textAlign: "center" }}>{it.q}</span><span style={{ flex: 1.2, textAlign: "right" }}>{it.r}</span><span style={{ flex: 1.2, textAlign: "right" }}>{it.a}</span>
+        )}
+      </div>
+
+      {/* From & Bill To */}
+      {(showFrom || showBillTo) && (
+        <div style={{ display: "flex", gap: 30, marginBottom: 6 }}>
+          {showFrom && (
+            <div style={{ flex: 1 }}>
+              <div style={secH}>From</div>
+              <div style={{ fontSize: 11, lineHeight: 1.4, color: grayText }}>
+                <strong style={{ color: darkText }}>FrameMaxx Web Development Agency</strong><br />
+                {fromLines}
+              </div>
             </div>
-          ))}
+          )}
+          {showBillTo && (
+            <div style={{ flex: 1 }}>
+              <div style={secH}>Bill To</div>
+              <div style={{ fontSize: 11, lineHeight: 1.4, color: grayText }}>
+                {billToLines}
+              </div>
+            </div>
+          )}
         </div>
-      </div>
-      <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 6 }}>
-        <div style={{ width: 230 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, padding: "2px 0", borderBottom: `1px solid ${borderColor}` }}><span style={{ color: grayText }}>Subtotal</span><span style={{ fontWeight: 600 }}>{val(data, "subtotal", "$0.00")}</span></div>
-          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, padding: "2px 0", borderBottom: `1px solid ${borderColor}` }}><span style={{ color: grayText }}>Tax</span><span style={{ fontWeight: 600 }}>{val(data, "tax", "$0.00")}</span></div>
-          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, padding: "4px 0", fontWeight: 700, borderBottom: `2px solid ${gold}` }}><span>Total Due</span><span style={{ color: gold }}>{val(data, "totalDue", "$0.00")}</span></div>
+      )}
+
+      {/* Project */}
+      {showProject && (
+        <div style={sec}>
+          <div style={secH}>Project</div>
+          <CFR label="Project Name" value={val(data, "projectName")} />
+          <CFR label="Project ID" value={val(data, "projectId")} />
         </div>
-      </div>
-      <div style={sec}>
-        <div style={secH}>Payment Information</div>
-        <p style={para}>Payment due within 15 business days. Include invoice number in payment reference.</p>
-        <FR label="Bank Name" value={val(data, "bankName")} />
-        <div style={row}><span style={lbl}>Account Name:</span><span>FrameMaxx Web Development Agency</span></div>
-        <FR label="Account Number" value={val(data, "accountNumber")} />
-        <FR label="Routing Number" value={val(data, "routingNumber")} />
-      </div>
+      )}
+
+      {/* Line Items Table */}
+      {showLineItems && (
+        <div style={sec}>
+          <div style={{ fontSize: 10, width: "100%" }}>
+            <div style={{ display: "flex", fontWeight: 700, borderBottom: `2px solid ${gold}`, paddingBottom: 3, marginBottom: 2 }}>
+              <span style={{ flex: 0.5 }}>#</span><span style={{ flex: 3 }}>Description</span><span style={{ flex: 0.7, textAlign: "center" }}>Qty</span><span style={{ flex: 1.2, textAlign: "right" }}>Rate</span><span style={{ flex: 1.2, textAlign: "right" }}>Amount</span>
+            </div>
+            {visibleItems.map((it, i) => (
+              <div key={i} style={{ display: "flex", borderBottom: `1px solid ${borderColor}`, padding: "3px 0", color: grayText, fontSize: 10 }}>
+                <span style={{ flex: 0.5 }}>{i + 1}</span><span style={{ flex: 3 }}>{it.d}</span><span style={{ flex: 0.7, textAlign: "center" }}>{it.q}</span><span style={{ flex: 1.2, textAlign: "right" }}>{it.r}</span><span style={{ flex: 1.2, textAlign: "right" }}>{it.a}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Totals */}
+      {showTotals && (
+        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 6 }}>
+          <div style={{ width: 230 }}>
+            {hasVal(data, "subtotal") && (
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, padding: "2px 0", borderBottom: `1px solid ${borderColor}` }}><span style={{ color: grayText }}>Subtotal</span><span style={{ fontWeight: 600 }}>{val(data, "subtotal")}</span></div>
+            )}
+            {hasVal(data, "tax") && (
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, padding: "2px 0", borderBottom: `1px solid ${borderColor}` }}><span style={{ color: grayText }}>Tax</span><span style={{ fontWeight: 600 }}>{val(data, "tax")}</span></div>
+            )}
+            {hasVal(data, "totalDue") && (
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, padding: "4px 0", fontWeight: 700, borderBottom: `2px solid ${gold}` }}><span>Total Due</span><span style={{ color: gold }}>{val(data, "totalDue")}</span></div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Payment Info */}
+      {showPayment && (
+        <div style={sec}>
+          <div style={secH}>Payment Information</div>
+          <p style={para}>Payment due within 15 business days. Include invoice number in payment reference.</p>
+          <CFR label="Bank Name" value={val(data, "bankName")} />
+          <CFR label="Account Number" value={val(data, "accountNumber")} />
+          <CFR label="Routing Number" value={val(data, "routingNumber")} />
+        </div>
+      )}
+
       <div style={{ textAlign: "center", fontSize: 10, color: lightGray, marginTop: 6 }}>Thank you for your business!</div>
       <PageFooter />
     </div>
@@ -460,17 +622,67 @@ const projectBriefDefaults: Record<string, string | boolean> = {
 };
 
 function projectBriefRender(data: Record<string, string | boolean>) {
+  const showDocInfo = hasAny(data, ["briefId", "date"]);
+  const showClient = hasAny(data, ["fullName", "email", "phone", "company", "jobTitle"]);
+  const showBusiness = hasAny(data, ["businessDesc", "targetAudience", "competitors"]);
+  const showGoals = hasAny(data, ["primaryGoal", "problems", "successMetrics"]);
+  const showSpecs = hasAny(data, ["projectType", "budgetRange", "launchDate", "existingWebsite"]);
+  const showFeatures = hasAny(data, ["features", "integrations", "references", "brandColors", "stylePreference"]);
+
   return (
     <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11 }}>
       <PageHeader title="Project Brief" subtitle="Client Intake Questionnaire" />
-      <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 10, color: grayText }}>
-        <span>Brief ID: {val(data, "briefId", "[___________]")}</span><span>Date: {val(data, "date", "[___________]")}</span>
-      </div>
-      <div style={sec}><div style={secH}>Client Information</div><FR label="Full Name" value={val(data, "fullName")} /><FR label="Email" value={val(data, "email")} /><FR label="Phone" value={val(data, "phone")} /><FR label="Company" value={val(data, "company")} /><FR label="Job Title" value={val(data, "jobTitle")} /></div>
-      <div style={sec}><div style={secH}>Business Overview</div><p style={para}><strong style={{ color: darkText }}>Business:</strong> {val(data, "businessDesc", "[___________]")}</p><p style={para}><strong style={{ color: darkText }}>Target audience:</strong> {val(data, "targetAudience", "[___________]")}</p><p style={para}><strong style={{ color: darkText }}>Competitors:</strong> {val(data, "competitors", "[___________]")}</p></div>
-      <div style={sec}><div style={secH}>Project Goals</div><FR label="Primary Goal" value={val(data, "primaryGoal")} /><p style={para}><strong style={{ color: darkText }}>Problems:</strong> {val(data, "problems", "[___________]")}</p><FR label="Success Metrics" value={val(data, "successMetrics")} /></div>
-      <div style={sec}><div style={secH}>Specifications</div><FR label="Project Type" value={val(data, "projectType")} /><FR label="Budget Range" value={val(data, "budgetRange")} /><FR label="Launch Date" value={val(data, "launchDate")} /><FR label="Existing Website" value={val(data, "existingWebsite")} /></div>
-      <div style={sec}><div style={secH}>Features & Design</div><p style={para}><strong style={{ color: darkText }}>Features:</strong> {val(data, "features", "[___________]")}</p><FR label="Integrations" value={val(data, "integrations")} /><FR label="References" value={val(data, "references")} /><FR label="Brand Colors" value={val(data, "brandColors")} /><FR label="Style" value={val(data, "stylePreference")} /></div>
+      {showDocInfo && (
+        <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 10, color: grayText }}>
+          {hasVal(data, "briefId") && <span>Brief ID: {val(data, "briefId")}</span>}
+          {hasVal(data, "date") && <span>Date: {val(data, "date")}</span>}
+        </div>
+      )}
+      {showClient && (
+        <div style={sec}>
+          <div style={secH}>Client Information</div>
+          <CFR label="Full Name" value={val(data, "fullName")} />
+          <CFR label="Email" value={val(data, "email")} />
+          <CFR label="Phone" value={val(data, "phone")} />
+          <CFR label="Company" value={val(data, "company")} />
+          <CFR label="Job Title" value={val(data, "jobTitle")} />
+        </div>
+      )}
+      {showBusiness && (
+        <div style={sec}>
+          <div style={secH}>Business Overview</div>
+          {hasVal(data, "businessDesc") && <p style={para}><strong style={{ color: darkText }}>Business:</strong> {val(data, "businessDesc")}</p>}
+          {hasVal(data, "targetAudience") && <p style={para}><strong style={{ color: darkText }}>Target audience:</strong> {val(data, "targetAudience")}</p>}
+          {hasVal(data, "competitors") && <p style={para}><strong style={{ color: darkText }}>Competitors:</strong> {val(data, "competitors")}</p>}
+        </div>
+      )}
+      {showGoals && (
+        <div style={sec}>
+          <div style={secH}>Project Goals</div>
+          <CFR label="Primary Goal" value={val(data, "primaryGoal")} />
+          {hasVal(data, "problems") && <p style={para}><strong style={{ color: darkText }}>Problems:</strong> {val(data, "problems")}</p>}
+          <CFR label="Success Metrics" value={val(data, "successMetrics")} />
+        </div>
+      )}
+      {showSpecs && (
+        <div style={sec}>
+          <div style={secH}>Specifications</div>
+          <CFR label="Project Type" value={val(data, "projectType")} />
+          <CFR label="Budget Range" value={val(data, "budgetRange")} />
+          <CFR label="Launch Date" value={val(data, "launchDate")} />
+          <CFR label="Existing Website" value={val(data, "existingWebsite")} />
+        </div>
+      )}
+      {showFeatures && (
+        <div style={sec}>
+          <div style={secH}>Features & Design</div>
+          {hasVal(data, "features") && <p style={para}><strong style={{ color: darkText }}>Features:</strong> {val(data, "features")}</p>}
+          <CFR label="Integrations" value={val(data, "integrations")} />
+          <CFR label="References" value={val(data, "references")} />
+          <CFR label="Brand Colors" value={val(data, "brandColors")} />
+          <CFR label="Style" value={val(data, "stylePreference")} />
+        </div>
+      )}
       <PageFooter />
     </div>
   );
@@ -519,36 +731,76 @@ const sowDefaults: Record<string, string | boolean> = {
 
 function sowRender(data: Record<string, string | boolean>) {
   const phases = [
-    { n: "Discovery", d: val(data, "p1Duration", "[X wks]") },
-    { n: "Design", d: val(data, "p2Duration", "[X wks]") },
-    { n: "Development", d: val(data, "p3Duration", "[X wks]") },
-    { n: "Testing", d: val(data, "p4Duration", "[X wks]") },
-    { n: "Launch", d: val(data, "p5Duration", "[X wks]") },
+    { n: "Discovery", d: val(data, "p1Duration"), filled: hasVal(data, "p1Duration") },
+    { n: "Design", d: val(data, "p2Duration"), filled: hasVal(data, "p2Duration") },
+    { n: "Development", d: val(data, "p3Duration"), filled: hasVal(data, "p3Duration") },
+    { n: "Testing", d: val(data, "p4Duration"), filled: hasVal(data, "p4Duration") },
+    { n: "Launch", d: val(data, "p5Duration"), filled: hasVal(data, "p5Duration") },
   ];
+  const visiblePhases = phases.filter((p) => p.filled);
+  const showDocInfo = hasAny(data, ["sowId", "date"]);
+  const showProject = hasAny(data, ["projectName", "client", "projectManager", "projectOverview"]);
+  const showObjectives = hasAny(data, ["obj1", "obj2", "obj3", "obj4"]);
+  const showTech = hasAny(data, ["frontend", "backend", "database", "hosting"]);
+  const showTimeline = visiblePhases.length > 0;
+
+  // Build objectives list
+  const objectives: string[] = [];
+  if (hasVal(data, "obj1")) objectives.push(`1. ${val(data, "obj1")}`);
+  if (hasVal(data, "obj2")) objectives.push(`2. ${val(data, "obj2")}`);
+  if (hasVal(data, "obj3")) objectives.push(`3. ${val(data, "obj3")}`);
+  if (hasVal(data, "obj4")) objectives.push(`4. ${val(data, "obj4")}`);
+
   return (
     <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11 }}>
       <PageHeader title="Scope of Work" subtitle="Statement of Work" />
-      <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 10, color: grayText }}>
-        <span>SOW ID: {val(data, "sowId", "[___________]")}</span><span>Date: {val(data, "date", "[___________]")}</span>
-      </div>
-      <div style={sec}><div style={secH}>Project Overview</div><FR label="Project Name" value={val(data, "projectName")} /><FR label="Client" value={val(data, "client")} /><FR label="Project Manager" value={val(data, "projectManager")} /><p style={para}>{val(data, "projectOverview", "[Overview]")}</p></div>
-      <div style={sec}><div style={secH}>Objectives</div><p style={para}>1. {val(data, "obj1", "[Obj 1]")}<br />2. {val(data, "obj2", "[Obj 2]")}<br />3. {val(data, "obj3", "[Obj 3]")}<br />4. {val(data, "obj4", "[Obj 4]")}</p></div>
+      {showDocInfo && (
+        <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 10, color: grayText }}>
+          {hasVal(data, "sowId") && <span>SOW ID: {val(data, "sowId")}</span>}
+          {hasVal(data, "date") && <span>Date: {val(data, "date")}</span>}
+        </div>
+      )}
+      {showProject && (
+        <div style={sec}>
+          <div style={secH}>Project Overview</div>
+          <CFR label="Project Name" value={val(data, "projectName")} />
+          <CFR label="Client" value={val(data, "client")} />
+          <CFR label="Project Manager" value={val(data, "projectManager")} />
+          {hasVal(data, "projectOverview") && <p style={para}>{val(data, "projectOverview")}</p>}
+        </div>
+      )}
+      {showObjectives && (
+        <div style={sec}>
+          <div style={secH}>Objectives</div>
+          <p style={para}>{objectives.join("<br />")}</p>
+        </div>
+      )}
       <div style={sec}><div style={secH}>In Scope</div><p style={para}>Custom UI/UX design • Responsive dev • CMS integration • User auth • Payment gateway • SEO • Performance optimization • Cross-browser testing • Deployment • 30-day support</p></div>
       <div style={sec}><div style={secH}>Out of Scope</div><p style={para}>Content writing • Photography • Video production • Ongoing maintenance • Mobile app dev • Third-party API dev</p></div>
-      <div style={sec}><div style={secH}>Technical Specifications</div><FR label="Frontend" value={val(data, "frontend")} /><FR label="Backend" value={val(data, "backend")} /><FR label="Database" value={val(data, "database")} /><FR label="Hosting" value={val(data, "hosting")} /></div>
-      <div style={sec}>
-        <div style={secH}>Timeline</div>
-        <div style={{ fontSize: 10, width: "100%" }}>
-          <div style={{ display: "flex", fontWeight: 700, borderBottom: `2px solid ${gold}`, paddingBottom: 2, marginBottom: 2 }}>
-            <span style={{ flex: 0.5 }}>#</span><span style={{ flex: 2 }}>Phase</span><span style={{ flex: 1 }}>Duration</span>
-          </div>
-          {phases.map((p, i) => (
-            <div key={p.n} style={{ display: "flex", borderBottom: `1px solid ${borderColor}`, padding: "2px 0", color: grayText, fontSize: 10 }}>
-              <span style={{ flex: 0.5 }}>{i + 1}</span><span style={{ flex: 2 }}>{p.n}</span><span style={{ flex: 1 }}>{p.d}</span>
-            </div>
-          ))}
+      {showTech && (
+        <div style={sec}>
+          <div style={secH}>Technical Specifications</div>
+          <CFR label="Frontend" value={val(data, "frontend")} />
+          <CFR label="Backend" value={val(data, "backend")} />
+          <CFR label="Database" value={val(data, "database")} />
+          <CFR label="Hosting" value={val(data, "hosting")} />
         </div>
-      </div>
+      )}
+      {showTimeline && (
+        <div style={sec}>
+          <div style={secH}>Timeline</div>
+          <div style={{ fontSize: 10, width: "100%" }}>
+            <div style={{ display: "flex", fontWeight: 700, borderBottom: `2px solid ${gold}`, paddingBottom: 2, marginBottom: 2 }}>
+              <span style={{ flex: 0.5 }}>#</span><span style={{ flex: 2 }}>Phase</span><span style={{ flex: 1 }}>Duration</span>
+            </div>
+            {visiblePhases.map((p, i) => (
+              <div key={p.n} style={{ display: "flex", borderBottom: `1px solid ${borderColor}`, padding: "2px 0", color: grayText, fontSize: 10 }}>
+                <span style={{ flex: 0.5 }}>{i + 1}</span><span style={{ flex: 2 }}>{p.n}</span><span style={{ flex: 1 }}>{p.d}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       <div style={sec}><div style={secH}>Assumptions</div><p style={para}>• Client provides content & assets within 5 business days • Client feedback within 48 hours per review • Third-party services are client&apos;s responsibility • Scope changes require formal Change Request</p></div>
       <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, gap: 40 }}>
         <SigBlock party="FrameMaxx" /><SigBlock party="Client" />
@@ -608,18 +860,72 @@ const changeRequestDefaults: Record<string, string | boolean> = {
 };
 
 function changeRequestRender(data: Record<string, string | boolean>) {
+  const showDocInfo = hasAny(data, ["crId", "date"]);
+  const showProject = hasAny(data, ["projectName", "projectId", "currentPhase"]);
+  const showRequestor = hasAny(data, ["requestorName", "requestorRole", "requestorEmail"]);
+  const showChange = hasAny(data, ["changeDesc", "changeReason", "ifNotImplemented"]);
+  const showImpact = hasAny(data, ["priority", "timelineImpact", "budgetImpact", "additionalCost", "additionalTime"]);
+  const showDeliverables = hasVal(data, "affectedDeliverables");
+  const showApproval = hasAny(data, ["decision", "approvedBy", "approvalDate", "approvalNotes"]);
+
   return (
     <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11 }}>
       <PageHeader title="Change Request Form" subtitle="Project Modification Request" />
-      <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 10, color: grayText }}>
-        <span>CR ID: {val(data, "crId", "[___________]")}</span><span>Date: {val(data, "date", "[___________]")}</span>
-      </div>
-      <div style={sec}><div style={secH}>Project Information</div><FR label="Project Name" value={val(data, "projectName")} /><FR label="Project ID" value={val(data, "projectId")} /><FR label="Current Phase" value={val(data, "currentPhase")} /></div>
-      <div style={sec}><div style={secH}>Requestor</div><FR label="Name" value={val(data, "requestorName")} /><FR label="Role" value={val(data, "requestorRole")} /><FR label="Email" value={val(data, "requestorEmail")} /></div>
-      <div style={sec}><div style={secH}>Change Description</div><p style={para}><strong style={{ color: darkText }}>Description:</strong> {val(data, "changeDesc", "[___________]")}</p><p style={para}><strong style={{ color: darkText }}>Reason:</strong> {val(data, "changeReason", "[___________]")}</p><p style={para}><strong style={{ color: darkText }}>If NOT implemented:</strong> {val(data, "ifNotImplemented", "[___________]")}</p></div>
-      <div style={sec}><div style={secH}>Impact Assessment</div><FR label="Priority" value={val(data, "priority")} /><FR label="Timeline Impact" value={val(data, "timelineImpact")} /><FR label="Budget Impact" value={val(data, "budgetImpact")} /><FR label="Est. Additional Cost" value={val(data, "additionalCost")} /><FR label="Additional Time" value={val(data, "additionalTime")} /></div>
-      <div style={sec}><div style={secH}>Affected Deliverables</div><p style={para}>{val(data, "affectedDeliverables", "[___________]")}</p></div>
-      <div style={sec}><div style={secH}>Approval</div><FR label="Decision" value={val(data, "decision")} /><FR label="Approved By" value={val(data, "approvedBy")} /><FR label="Approval Date" value={val(data, "approvalDate")} /><p style={para}><strong style={{ color: darkText }}>Notes:</strong> {val(data, "approvalNotes", "[___________]")}</p></div>
+      {showDocInfo && (
+        <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 10, color: grayText }}>
+          {hasVal(data, "crId") && <span>CR ID: {val(data, "crId")}</span>}
+          {hasVal(data, "date") && <span>Date: {val(data, "date")}</span>}
+        </div>
+      )}
+      {showProject && (
+        <div style={sec}>
+          <div style={secH}>Project Information</div>
+          <CFR label="Project Name" value={val(data, "projectName")} />
+          <CFR label="Project ID" value={val(data, "projectId")} />
+          <CFR label="Current Phase" value={val(data, "currentPhase")} />
+        </div>
+      )}
+      {showRequestor && (
+        <div style={sec}>
+          <div style={secH}>Requestor</div>
+          <CFR label="Name" value={val(data, "requestorName")} />
+          <CFR label="Role" value={val(data, "requestorRole")} />
+          <CFR label="Email" value={val(data, "requestorEmail")} />
+        </div>
+      )}
+      {showChange && (
+        <div style={sec}>
+          <div style={secH}>Change Description</div>
+          {hasVal(data, "changeDesc") && <p style={para}><strong style={{ color: darkText }}>Description:</strong> {val(data, "changeDesc")}</p>}
+          {hasVal(data, "changeReason") && <p style={para}><strong style={{ color: darkText }}>Reason:</strong> {val(data, "changeReason")}</p>}
+          {hasVal(data, "ifNotImplemented") && <p style={para}><strong style={{ color: darkText }}>If NOT implemented:</strong> {val(data, "ifNotImplemented")}</p>}
+        </div>
+      )}
+      {showImpact && (
+        <div style={sec}>
+          <div style={secH}>Impact Assessment</div>
+          <CFR label="Priority" value={val(data, "priority")} />
+          <CFR label="Timeline Impact" value={val(data, "timelineImpact")} />
+          <CFR label="Budget Impact" value={val(data, "budgetImpact")} />
+          <CFR label="Est. Additional Cost" value={val(data, "additionalCost")} />
+          <CFR label="Additional Time" value={val(data, "additionalTime")} />
+        </div>
+      )}
+      {showDeliverables && (
+        <div style={sec}>
+          <div style={secH}>Affected Deliverables</div>
+          <p style={para}>{val(data, "affectedDeliverables")}</p>
+        </div>
+      )}
+      {showApproval && (
+        <div style={sec}>
+          <div style={secH}>Approval</div>
+          <CFR label="Decision" value={val(data, "decision")} />
+          <CFR label="Approved By" value={val(data, "approvedBy")} />
+          <CFR label="Approval Date" value={val(data, "approvalDate")} />
+          {hasVal(data, "approvalNotes") && <p style={para}><strong style={{ color: darkText }}>Notes:</strong> {val(data, "approvalNotes")}</p>}
+        </div>
+      )}
       <PageFooter />
     </div>
   );
@@ -644,20 +950,25 @@ const privacyTermsDefaults: Record<string, string | boolean> = {
 };
 
 function privacyTermsRender(data: Record<string, string | boolean>) {
+  const showDocInfo = hasAny(data, ["documentId", "lastUpdated"]);
+  const effectiveDateStr = hasVal(data, "effectiveDate") ? val(data, "effectiveDate") : "";
+
   return (
     <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 10 }}>
-      <PageHeader title="Privacy Policy & Terms of Service" subtitle={`Effective: ${val(data, "effectiveDate", "[___________]")}`} />
-      <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 9, color: grayText }}>
-        <span>Doc ID: {val(data, "documentId", "[___________]")}</span>
-        <span>Updated: {val(data, "lastUpdated", "[___________]")}</span>
-      </div>
+      <PageHeader title="Privacy Policy & Terms of Service" {...(effectiveDateStr ? { subtitle: `Effective: ${effectiveDateStr}` } : {})} />
+      {showDocInfo && (
+        <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 9, color: grayText }}>
+          {hasVal(data, "documentId") && <span>Doc ID: {val(data, "documentId")}</span>}
+          {hasVal(data, "lastUpdated") && <span>Updated: {val(data, "lastUpdated")}</span>}
+        </div>
+      )}
       <div style={{ textAlign: "center", marginBottom: 4 }}><div style={{ fontSize: 14, fontWeight: 700, color: darkText }}>PRIVACY POLICY</div><div style={{ width: 40, height: 2, background: gold, margin: "3px auto" }}></div></div>
       <div style={sec}><div style={secH}>1. Information We Collect</div><p style={para}>We collect information you provide: name, email, phone, business name, project details. We also automatically collect technical data: IP address, browser type, device info, and usage data via cookies.</p></div>
       <div style={sec}><div style={secH}>2. How We Use Information</div><p style={para}>Evaluate project requests • Communicate about progress • Provide and improve services • Send relevant updates (with consent) • Comply with legal obligations • Protect rights and prevent fraud</p></div>
       <div style={sec}><div style={secH}>3. Information Sharing</div><p style={para}>We do not sell, trade, or rent personal information. May share with: trusted service providers, legal authorities when required, business partners with explicit consent.</p></div>
       <div style={sec}><div style={secH}>4. Data Security</div><p style={para}>Industry-standard measures including encryption, secure servers, and access controls.</p></div>
       <div style={sec}><div style={secH}>5. Data Retention</div><p style={para}>Retained as long as necessary. Project data retained up to 3 years after completion.</p></div>
-      <div style={sec}><div style={secH}>6. Your Rights</div><p style={para}>Access, correct, delete your data, object to processing, request portability, withdraw consent. Contact: {val(data, "contactEmail", "privacy@framemaxx.com")}</p></div>
+      <div style={sec}><div style={secH}>6. Your Rights</div><p style={para}>Access, correct, delete your data, object to processing, request portability, withdraw consent. Contact: {hasVal(data, "contactEmail") ? val(data, "contactEmail") : "privacy@framemaxx.com"}</p></div>
       <div style={sec}><div style={secH}>7. Cookies</div><p style={para}>Uses cookies to enhance experience, analyze traffic, and personalize content. Control via browser settings.</p></div>
       <div style={{ textAlign: "center", marginTop: 6, marginBottom: 4 }}><div style={{ fontSize: 14, fontWeight: 700, color: darkText }}>TERMS OF SERVICE</div><div style={{ width: 40, height: 2, background: gold, margin: "3px auto" }}></div></div>
       <div style={sec}><div style={secH}>1. Acceptance</div><p style={para}>By accessing our website or engaging our services, you agree to these Terms.</p></div>
@@ -667,7 +978,7 @@ function privacyTermsRender(data: Record<string, string | boolean>) {
       <div style={sec}><div style={secH}>5. Limitation of Liability</div><p style={para}>Total liability shall not exceed fees paid. Not liable for indirect, incidental, or consequential damages.</p></div>
       <div style={sec}><div style={secH}>6. Dispute Resolution</div><p style={para}>Good-faith negotiation first, then binding arbitration if unresolved.</p></div>
       <div style={sec}><div style={secH}>7. Modifications</div><p style={para}>FrameMaxx may modify Terms at any time. Continued use constitutes acceptance.</p></div>
-      <div style={{ textAlign: "center", marginTop: 4, fontSize: 9, color: lightGray }}>Questions? Contact {val(data, "legalEmail", "legal@framemaxx.com")}</div>
+      <div style={{ textAlign: "center", marginTop: 4, fontSize: 9, color: lightGray }}>Questions? Contact {hasVal(data, "legalEmail") ? val(data, "legalEmail") : "legal@framemaxx.com"}</div>
       <PageFooter />
     </div>
   );
