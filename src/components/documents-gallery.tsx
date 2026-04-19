@@ -344,7 +344,9 @@ function DocumentViewer({
               style={{
                 width: "794px",
                 minHeight: "1123px",
-                padding: "60px",
+                maxHeight: "1123px",
+                overflow: "hidden",
+                padding: "36px 40px",
                 fontFamily: "Arial, Helvetica, sans-serif",
                 color: "#1A1A1A",
               }}

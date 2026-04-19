@@ -57,3 +57,30 @@ Stage Summary:
 - Full-screen viewer with zoom controls and PDF export via html2pdf.js
 - Tab navigation between Intake Form and Documents sections
 - Consistent FrameMaxx branding across all templates
+
+---
+Task ID: 3
+Agent: Main Agent
+Task: Add live form-to-A4 binding and single-page fit for all templates
+
+Work Log:
+- Rewrote templates.tsx with dynamic field schemas and live render functions
+- Each template now has fieldGroups (form schema) + render(formData) function
+- Created split-view DocumentViewer: form panel (left) + live A4 preview (right)
+- Form fields: text, date, textarea, select, checkbox - all update A4 in real-time
+- Fixed html2pdf.js SSR error (self is not defined) with dynamic import
+- Condensed all 8 templates to fit on single A4 page:
+  - Reduced fonts (10px body, 9px labels, 16px title)
+  - Tighter spacing (8px section margins, 3px row margins)
+  - Compact header/footer (8px brand, 2px dividers)
+  - Reduced signature block spacing (24px/12px margins)
+  - Privacy+Terms uses 9px base font with 7 sections each
+- A4 viewer padding reduced from 60px to 36px/40px
+- Added maxHeight: 1123px + overflow: hidden to enforce single-page constraint
+- Lint passes, dev server compiles and serves pages correctly
+
+Stage Summary:
+- All 8 templates fit on exactly 1 A4 page with compact professional formatting
+- Live form-to-A4 binding: type in form → A4 preview updates instantly
+- Split-view with scrollable form panel and zoomable A4 preview
+- PDF export works with dynamically imported html2pdf.js
