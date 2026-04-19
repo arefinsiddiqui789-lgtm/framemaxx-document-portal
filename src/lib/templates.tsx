@@ -41,7 +41,7 @@ const secH: React.CSSProperties = {
   fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1,
   color: gold, marginBottom: 3, paddingBottom: 2, borderBottom: `1px solid ${borderColor}`,
 };
-const row: React.CSSProperties = { display: "flex", marginBottom: 2, fontSize: 11, lineHeight: 1.35, textRendering: "geometricPrecision" };
+const row: React.CSSProperties = { display: "flex", marginBottom: 4, fontSize: 11, lineHeight: 1.35, textRendering: "geometricPrecision", alignItems: "baseline" };
 const lbl: React.CSSProperties = { width: 130, fontWeight: 600, color: grayText, flexShrink: 0, fontSize: 11, textRendering: "geometricPrecision" };
 const para: React.CSSProperties = { fontSize: 11, color: grayText, lineHeight: 1.4, marginBottom: 2, textRendering: "geometricPrecision" };
 
@@ -96,7 +96,7 @@ function FR({ label, value }: { label: string; value: string }) {
   return (
     <div style={row}>
       <span style={lbl}>{label}</span>
-      <span style={{ color: value ? darkText : grayText, flexGrow: 1, borderBottom: "1px solid #CCC" }}>{value || "—"}</span>
+      <span style={{ color: value ? darkText : grayText, flexGrow: 1, borderBottom: "1px solid #CCC", paddingBottom: 1 }}>{value || "—"}</span>
     </div>
   );
 }
@@ -107,7 +107,7 @@ function CFR({ label, value }: { label: string; value: string }) {
   return (
     <div style={row}>
       <span style={lbl}>{label}</span>
-      <span style={{ color: darkText, flexGrow: 1, borderBottom: "1px solid #CCC" }}>{value}</span>
+      <span style={{ color: darkText, flexGrow: 1, borderBottom: "1px solid #CCC", paddingBottom: 1 }}>{value}</span>
     </div>
   );
 }
