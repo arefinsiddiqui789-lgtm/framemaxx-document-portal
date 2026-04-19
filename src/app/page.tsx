@@ -23,6 +23,7 @@ import {
   ArrowUpRight,
   FileText,
   PenLine,
+  Lock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -103,6 +104,29 @@ const STEP_COUNT = 3;
 type ActiveView = "intake" | "documents";
 
 export default function Home() {
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [passwordInput, setPasswordInput] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
+  const handlePasswordSubmit = (e?: React.FormEvent) => {
+    e?.preventDefault();
+    if (passwordInput === "6769") {
+      setIsAuthorized(true);
+      localStorage.setItem("fm_auth", "true");
+    } else {
+      setPasswordError("Incorrect password. Access denied.");
+      setTimeout(() => setPasswordError(""), 3000);
+    }
+  };
+
+  // Check auth on mount
+  useState(() => {
+    if (typeof window !== "undefined") {
+      const auth = localStorage.getItem("fm_auth");
+      if (auth === "true") setIsAuthorized(true);
+    }
+  });
+
   const [activeView, setActiveView] = useState<ActiveView>("intake");
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [currentStep, setCurrentStep] = useState(0);
@@ -262,6 +286,87 @@ export default function Home() {
       </div>
     </footer>
   );
+
+  // Password Gate
+  if (!isAuthorized) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 relative overflow-hidden">
+        {/* Background Accents */}
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 blur-[120px] rounded-full" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/5 blur-[120px] rounded-full" />
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="max-w-md w-full z-10"
+        >
+          <Card className="bg-card border-border/50 shadow-2xl overflow-hidden">
+            <div className="h-1.5 bg-gradient-to-r from-primary/50 via-primary to-primary/50" />
+            <CardContent className="p-8 sm:p-10 text-center">
+              <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-primary/10 flex items-center justify-center">
+                <Lock className="w-8 h-8 text-primary" />
+              </div>
+
+              <div className="flex justify-center items-center gap-2 mb-2">
+                <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center bg-[#1A1A1A]">
+                  <img src="/framemaxx-logo.png" alt="Logo" className="w-6 h-6 object-contain" />
+                </div>
+                <h2 className="text-xl font-bold tracking-tight">Frame<span className="text-primary">Maxx</span> Portal</h2>
+              </div>
+              <p className="text-sm text-muted-foreground mb-8">Please enter your access code to continue</p>
+
+              <form onSubmit={handlePasswordSubmit} className="space-y-4">
+                <div className="space-y-2 text-left">
+                  <Label htmlFor="passcode" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1">Access Code</Label>
+                  <div className="relative group">
+                    <Input
+                      id="passcode"
+                      type="password"
+                      placeholder="••••"
+                      value={passwordInput}
+                      onChange={(e) => setPasswordInput(e.target.value)}
+                      className="bg-input/50 h-12 text-center text-xl tracking-[0.5em] font-bold border-border/40 focus:border-primary/50 focus:ring-primary/20 transition-all rounded-xl"
+                      autoFocus
+                    />
+                    <div className="absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-0 group-focus-within:opacity-100 transition-opacity" />
+                  </div>
+                  <AnimatePresence>
+                    {passwordError && (
+                      <motion.p
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
+                        className="text-xs text-destructive text-center mt-2 font-medium"
+                      >
+                        {passwordError}
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                <Button
+                  type="submit"
+                  className="w-full h-12 bg-primary text-primary-foreground hover:bg-primary/90 font-bold text-sm tracking-wide rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
+                >
+                  Unlock Portal
+                </Button>
+              </form>
+
+              <div className="mt-8 pt-6 border-t border-border/20 flex items-center justify-center gap-4">
+                <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground uppercase tracking-widest">
+                  <Shield className="w-3 h-3 text-primary/50" />
+                  <span>Secure Access</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <p className="mt-6 text-center text-xs text-muted-foreground/60">
+            © {new Date().getFullYear()} FrameMaxx Agency. Specialized Digital Solutions.
+          </p>
+        </motion.div>
+      </div>
+    );
+  }
 
   // Success Screen
   if (isSubmitted && activeView === "intake") {
