@@ -41,9 +41,9 @@ const secH: React.CSSProperties = {
   fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1,
   color: gold, marginBottom: 3, paddingBottom: 2, borderBottom: `1px solid ${borderColor}`,
 };
-const row: React.CSSProperties = { display: "flex", marginBottom: 4, fontSize: 11, lineHeight: 1.35, textRendering: "geometricPrecision", alignItems: "baseline" };
+const row: React.CSSProperties = { display: "flex", marginBottom: 6, fontSize: 11, lineHeight: 1.5, textRendering: "geometricPrecision" };
 const lbl: React.CSSProperties = { width: 130, fontWeight: 600, color: grayText, flexShrink: 0, fontSize: 11, textRendering: "geometricPrecision" };
-const para: React.CSSProperties = { fontSize: 11, color: grayText, lineHeight: 1.4, marginBottom: 2, textRendering: "geometricPrecision" };
+const para: React.CSSProperties = { fontSize: 11, color: grayText, lineHeight: 1.6, marginBottom: 4, textRendering: "geometricPrecision" };
 
 const val = (data: Record<string, string | boolean>, key: string, fallback = ""): string => {
   const v = data[key];
@@ -96,7 +96,7 @@ function FR({ label, value }: { label: string; value: string }) {
   return (
     <div style={row}>
       <span style={lbl}>{label}</span>
-      <span style={{ color: value ? darkText : grayText, flexGrow: 1, borderBottom: "1px solid #CCC", paddingBottom: 1 }}>{value || "—"}</span>
+      <span style={{ color: value ? darkText : grayText, flexGrow: 1, borderBottom: "1px solid #DDD", paddingBottom: 6, display: "inline-block" }}>{value || "—"}</span>
     </div>
   );
 }
@@ -107,7 +107,7 @@ function CFR({ label, value }: { label: string; value: string }) {
   return (
     <div style={row}>
       <span style={lbl}>{label}</span>
-      <span style={{ color: darkText, flexGrow: 1, borderBottom: "1px solid #CCC", paddingBottom: 1 }}>{value}</span>
+      <span style={{ color: darkText, flexGrow: 1, borderBottom: "1px solid #DDD", paddingBottom: 6, display: "inline-block" }}>{value}</span>
     </div>
   );
 }
@@ -528,11 +528,11 @@ function invoiceRender(data: Record<string, string | boolean>) {
       {showLineItems && (
         <div style={sec}>
           <div style={{ fontSize: 10, width: "100%" }}>
-            <div style={{ display: "flex", fontWeight: 700, borderBottom: `2px solid ${gold}`, paddingBottom: 5, marginBottom: 2, alignItems: "baseline" }}>
+            <div style={{ display: "flex", fontWeight: 700, borderBottom: `2px solid ${gold}`, paddingBottom: 8, marginBottom: 4 }}>
               <span style={{ flex: 0.5 }}>#</span><span style={{ flex: 3 }}>Description</span><span style={{ flex: 0.7, textAlign: "center" }}>Qty</span><span style={{ flex: 1.2, textAlign: "right" }}>Rate</span><span style={{ flex: 1.2, textAlign: "right" }}>Amount</span>
             </div>
             {visibleItems.map((it, i) => (
-              <div key={i} style={{ display: "flex", borderBottom: `1px solid ${borderColor}`, padding: "5px 0 3px 0", color: grayText, fontSize: 10, alignItems: "baseline" }}>
+              <div key={i} style={{ display: "flex", borderBottom: "1px solid #EEE", padding: "8px 0 6px 0", color: grayText, fontSize: 10 }}>
                 <span style={{ flex: 0.5 }}>{i + 1}</span><span style={{ flex: 3, color: darkText }}>{it.d}</span><span style={{ flex: 0.7, textAlign: "center" }}>{it.q}</span><span style={{ flex: 1.2, textAlign: "right" }}>{it.r}</span><span style={{ flex: 1.2, textAlign: "right" }}>{it.a}</span>
               </div>
             ))}
@@ -545,13 +545,13 @@ function invoiceRender(data: Record<string, string | boolean>) {
         <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 6 }}>
           <div style={{ width: 230 }}>
             {hasVal(data, "subtotal") && (
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, padding: "4px 0 2px 0", borderBottom: `1px solid ${borderColor}`, alignItems: "baseline" }}><span style={{ color: grayText }}>Subtotal</span><span style={{ fontWeight: 600 }}>{val(data, "subtotal")}</span></div>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, padding: "8px 0 4px 0", borderBottom: "1px solid #EEE" }}><span style={{ color: grayText }}>Subtotal</span><span style={{ fontWeight: 600 }}>{val(data, "subtotal")}</span></div>
             )}
             {hasVal(data, "tax") && (
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, padding: "4px 0 2px 0", borderBottom: `1px solid ${borderColor}`, alignItems: "baseline" }}><span style={{ color: grayText }}>Tax</span><span style={{ fontWeight: 600 }}>{val(data, "tax")}</span></div>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, padding: "8px 0 4px 0", borderBottom: "1px solid #EEE" }}><span style={{ color: grayText }}>Tax</span><span style={{ fontWeight: 600 }}>{val(data, "tax")}</span></div>
             )}
             {hasVal(data, "totalDue") && (
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, padding: "6px 0 2px 0", fontWeight: 700, borderBottom: `2px solid ${gold}`, alignItems: "baseline" }}><span>Total Due</span><span style={{ color: gold }}>{val(data, "totalDue")}</span></div>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, padding: "10px 0 4px 0", fontWeight: 700, borderBottom: `2px solid ${gold}` }}><span>Total Due</span><span style={{ color: gold }}>{val(data, "totalDue")}</span></div>
             )}
           </div>
         </div>
