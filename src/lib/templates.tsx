@@ -62,7 +62,7 @@ function PageHeader({ title, subtitle }: { title: string; subtitle?: string }) {
 
 function PageFooter() {
   return (
-    <div style={{ marginTop: "auto", paddingTop: 5, borderTop: `1px solid ${gold}`, textAlign: "center" }}>
+    <div style={{ marginTop: 8, paddingTop: 5, borderTop: `1px solid ${gold}`, textAlign: "center" }}>
       <div style={{ fontSize: 8, fontWeight: 700, color: gold, letterSpacing: 2 }}>FRAMEMAXX</div>
       <div style={{ fontSize: 7, color: lightGray, marginTop: 1 }}>FrameMaxx Web Development Agency • framemaxx.com</div>
     </div>
@@ -119,7 +119,7 @@ const contractDefaults: Record<string, string | boolean> = {
 
 function contractRender(data: Record<string, string | boolean>) {
   return (
-    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11, display: "flex", flexDirection: "column", height: "100%" }}>
+    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11 }}>
       <PageHeader title="Web Development Service Agreement" subtitle="Master Service Contract" />
       <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 10, color: grayText }}>
         <span>Contract ID: {val(data, "contractId", "[___________]")}</span>
@@ -179,7 +179,7 @@ const ndaDefaults: Record<string, string | boolean> = { ndaId: "", effectiveDate
 
 function ndaRender(data: Record<string, string | boolean>) {
   return (
-    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11, display: "flex", flexDirection: "column", height: "100%" }}>
+    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11 }}>
       <PageHeader title="Non-Disclosure Agreement" subtitle="Confidentiality Agreement" />
       <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 10, color: grayText }}>
         <span>NDA ID: {val(data, "ndaId", "[___________]")}</span>
@@ -270,7 +270,7 @@ function proposalRender(data: Record<string, string | boolean>) {
     { n: val(data, "m4", "[Milestone 4]"), t: val(data, "m4Time", "[Weeks]"), c: val(data, "m4Cost", "[$0]") },
   ];
   return (
-    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11, display: "flex", flexDirection: "column", height: "100%" }}>
+    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11 }}>
       <PageHeader title="Project Proposal" subtitle="Web Development Services" />
       <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 10, color: grayText }}>
         <span>Proposal ID: {val(data, "proposalId", "[___________]")}</span>
@@ -365,7 +365,7 @@ function invoiceRender(data: Record<string, string | boolean>) {
     { d: val(data, "item3Desc", "[Service]"), q: val(data, "item3Qty", "1"), r: val(data, "item3Rate", "$0"), a: val(data, "item3Amount", "$0") },
   ];
   return (
-    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11, display: "flex", flexDirection: "column", height: "100%" }}>
+    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
         <div><div style={{ fontSize: 9, color: gold, letterSpacing: 3, fontWeight: 700, marginBottom: 2 }}>FRAMEMAXX</div><div style={{ fontSize: 24, fontWeight: 700, color: darkText }}>INVOICE</div></div>
         <div style={{ textAlign: "right", fontSize: 11, color: grayText }}>
@@ -461,7 +461,7 @@ const projectBriefDefaults: Record<string, string | boolean> = {
 
 function projectBriefRender(data: Record<string, string | boolean>) {
   return (
-    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11, display: "flex", flexDirection: "column", height: "100%" }}>
+    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11 }}>
       <PageHeader title="Project Brief" subtitle="Client Intake Questionnaire" />
       <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 10, color: grayText }}>
         <span>Brief ID: {val(data, "briefId", "[___________]")}</span><span>Date: {val(data, "date", "[___________]")}</span>
@@ -526,7 +526,7 @@ function sowRender(data: Record<string, string | boolean>) {
     { n: "Launch", d: val(data, "p5Duration", "[X wks]") },
   ];
   return (
-    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11, display: "flex", flexDirection: "column", height: "100%" }}>
+    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11 }}>
       <PageHeader title="Scope of Work" subtitle="Statement of Work" />
       <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 10, color: grayText }}>
         <span>SOW ID: {val(data, "sowId", "[___________]")}</span><span>Date: {val(data, "date", "[___________]")}</span>
@@ -609,7 +609,7 @@ const changeRequestDefaults: Record<string, string | boolean> = {
 
 function changeRequestRender(data: Record<string, string | boolean>) {
   return (
-    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11, display: "flex", flexDirection: "column", height: "100%" }}>
+    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11 }}>
       <PageHeader title="Change Request Form" subtitle="Project Modification Request" />
       <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 10, color: grayText }}>
         <span>CR ID: {val(data, "crId", "[___________]")}</span><span>Date: {val(data, "date", "[___________]")}</span>
@@ -645,7 +645,7 @@ const privacyTermsDefaults: Record<string, string | boolean> = {
 
 function privacyTermsRender(data: Record<string, string | boolean>) {
   return (
-    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 10, display: "flex", flexDirection: "column", height: "100%" }}>
+    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 10 }}>
       <PageHeader title="Privacy Policy & Terms of Service" subtitle={`Effective: ${val(data, "effectiveDate", "[___________]")}`} />
       <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 9, color: grayText }}>
         <span>Doc ID: {val(data, "documentId", "[___________]")}</span>
