@@ -343,12 +343,12 @@ function DocumentViewer({
               className="bg-white shadow-2xl mx-auto"
               style={{
                 width: "794px",
-                minHeight: "1123px",
-                maxHeight: "1123px",
+                height: "1123px",
                 overflow: "hidden",
-                padding: "36px 40px",
+                padding: "50px",
                 fontFamily: "Arial, Helvetica, sans-serif",
                 color: "#1A1A1A",
+                boxSizing: "border-box",
               }}
             >
               {template.render(formData)}

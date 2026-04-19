@@ -28,7 +28,7 @@ export interface TemplateDef {
   render: (data: Record<string, string | boolean>) => React.ReactNode;
 }
 
-// ─── Compact Shared Styles (fits 1 A4 page) ──────────────────────────
+// ─── Compact Shared Styles (fits 1 A4 page, equal margins) ───────────
 
 const gold = "#D4AF37";
 const darkText = "#1A1A1A";
@@ -36,14 +36,14 @@ const grayText = "#555555";
 const lightGray = "#888888";
 const borderColor = "#E0E0E0";
 
-const sec: React.CSSProperties = { marginBottom: 8 };
+const sec: React.CSSProperties = { marginBottom: 5 };
 const secH: React.CSSProperties = {
-  fontSize: 9, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1.2,
-  color: gold, marginBottom: 4, paddingBottom: 3, borderBottom: `1px solid ${borderColor}`,
+  fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1,
+  color: gold, marginBottom: 3, paddingBottom: 2, borderBottom: `1px solid ${borderColor}`,
 };
-const row: React.CSSProperties = { display: "flex", marginBottom: 3, fontSize: 10, lineHeight: 1.4 };
-const lbl: React.CSSProperties = { width: 130, fontWeight: 600, color: grayText, flexShrink: 0, fontSize: 10 };
-const para: React.CSSProperties = { fontSize: 10, color: grayText, lineHeight: 1.5, marginBottom: 4 };
+const row: React.CSSProperties = { display: "flex", marginBottom: 2, fontSize: 11, lineHeight: 1.35 };
+const lbl: React.CSSProperties = { width: 130, fontWeight: 600, color: grayText, flexShrink: 0, fontSize: 11 };
+const para: React.CSSProperties = { fontSize: 11, color: grayText, lineHeight: 1.4, marginBottom: 2 };
 
 const val = (data: Record<string, string | boolean>, key: string, fallback = ""): string => {
   const v = data[key];
@@ -52,17 +52,17 @@ const val = (data: Record<string, string | boolean>, key: string, fallback = "")
 
 function PageHeader({ title, subtitle }: { title: string; subtitle?: string }) {
   return (
-    <div style={{ textAlign: "center", paddingBottom: 8, borderBottom: `2px solid ${gold}`, marginBottom: 10 }}>
-      <div style={{ fontSize: 8, color: gold, letterSpacing: 3, marginBottom: 2, fontWeight: 700 }}>FRAMEMAXX</div>
-      <h1 style={{ fontSize: 16, fontWeight: 700, color: darkText, margin: 0 }}>{title}</h1>
-      {subtitle && <div style={{ fontSize: 9, color: lightGray, marginTop: 2 }}>{subtitle}</div>}
+    <div style={{ textAlign: "center", paddingBottom: 6, borderBottom: `2px solid ${gold}`, marginBottom: 8 }}>
+      <div style={{ fontSize: 9, color: gold, letterSpacing: 3, marginBottom: 2, fontWeight: 700 }}>FRAMEMAXX</div>
+      <h1 style={{ fontSize: 18, fontWeight: 700, color: darkText, margin: 0 }}>{title}</h1>
+      {subtitle && <div style={{ fontSize: 10, color: lightGray, marginTop: 1 }}>{subtitle}</div>}
     </div>
   );
 }
 
 function PageFooter() {
   return (
-    <div style={{ marginTop: 12, paddingTop: 6, borderTop: `1px solid ${gold}`, textAlign: "center" }}>
+    <div style={{ marginTop: "auto", paddingTop: 5, borderTop: `1px solid ${gold}`, textAlign: "center" }}>
       <div style={{ fontSize: 8, fontWeight: 700, color: gold, letterSpacing: 2 }}>FRAMEMAXX</div>
       <div style={{ fontSize: 7, color: lightGray, marginTop: 1 }}>FrameMaxx Web Development Agency • framemaxx.com</div>
     </div>
@@ -72,10 +72,10 @@ function PageFooter() {
 function SigBlock({ party }: { party: string }) {
   return (
     <div style={{ flex: 1 }}>
-      <div style={{ borderTop: "1px solid #333", paddingTop: 3, fontSize: 8, color: lightGray, marginTop: 24 }}>
+      <div style={{ borderTop: "1px solid #333", paddingTop: 2, fontSize: 9, color: lightGray, marginTop: 20 }}>
         <strong>{party}</strong> — Signature
       </div>
-      <div style={{ borderTop: "1px solid #333", paddingTop: 3, fontSize: 8, color: lightGray, marginTop: 12 }}>Date</div>
+      <div style={{ borderTop: "1px solid #333", paddingTop: 2, fontSize: 9, color: lightGray, marginTop: 10 }}>Date</div>
     </div>
   );
 }
@@ -119,9 +119,9 @@ const contractDefaults: Record<string, string | boolean> = {
 
 function contractRender(data: Record<string, string | boolean>) {
   return (
-    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 10 }}>
+    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11, display: "flex", flexDirection: "column", height: "100%" }}>
       <PageHeader title="Web Development Service Agreement" subtitle="Master Service Contract" />
-      <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 9, color: grayText }}>
+      <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 10, color: grayText }}>
         <span>Contract ID: {val(data, "contractId", "[___________]")}</span>
         <span>Date: {val(data, "date", "[___________]")}</span>
       </div>
@@ -133,12 +133,12 @@ function contractRender(data: Record<string, string | boolean>) {
         <FR label="Client Email" value={val(data, "clientEmail")} />
         <FR label="Client Phone" value={val(data, "clientPhone")} />
       </div>
-      <div style={sec}><div style={secH}>1. Scope of Services</div><p style={para}>FrameMaxx agrees to provide web development services as described in the attached Statement of Work or Project Proposal, including design, development, testing, and deployment.</p></div>
+      <div style={sec}><div style={secH}>1. Scope of Services</div><p style={para}>FrameMaxx agrees to provide web development services as described in the attached Statement of Work, including design, development, testing, and deployment.</p></div>
       <div style={sec}>
         <div style={secH}>2. Payment Terms</div>
         <FR label="Total Project Fee" value={val(data, "totalFee")} />
         <FR label="Payment Schedule" value={val(data, "paymentSchedule")} />
-        <p style={para}>Invoices are due within 15 business days. Late payments subject to 1.5% monthly interest.</p>
+        <p style={para}>Invoices due within 15 business days. Late payments subject to 1.5% monthly interest.</p>
       </div>
       <div style={sec}>
         <div style={secH}>3. Timeline & Deliverables</div>
@@ -146,12 +146,12 @@ function contractRender(data: Record<string, string | boolean>) {
         <FR label="Est. Completion" value={val(data, "completionDate")} />
         <p style={para}>Timelines are estimates, subject to client feedback delays and scope changes.</p>
       </div>
-      <div style={sec}><div style={secH}>4. Intellectual Property</div><p style={para}>Upon full payment, Client receives ownership of custom code and design assets. FrameMaxx retains right to use generic libraries and tools.</p></div>
+      <div style={sec}><div style={secH}>4. Intellectual Property</div><p style={para}>Upon full payment, Client receives ownership of custom code and design assets. FrameMaxx retains right to use generic libraries.</p></div>
       <div style={sec}><div style={secH}>5. Confidentiality</div><p style={para}>Both parties agree to maintain confidentiality of proprietary information. Obligation survives termination for 2 years.</p></div>
       <div style={sec}><div style={secH}>6. Revisions & Changes</div><p style={para}>Scope includes up to 2 rounds of revisions per deliverable. Additional changes require a Change Request Form.</p></div>
       <div style={sec}><div style={secH}>7. Termination</div><p style={para}>Either party may terminate with 30 days written notice. Client responsible for payment of work completed up to termination.</p></div>
       <div style={sec}><div style={secH}>8. Limitation of Liability</div><p style={para}>Total liability shall not exceed total fees paid. Not liable for indirect, incidental, or consequential damages.</p></div>
-      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 16, gap: 40 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 10, gap: 40 }}>
         <SigBlock party="FrameMaxx" /><SigBlock party="Client" />
       </div>
       <PageFooter />
@@ -179,9 +179,9 @@ const ndaDefaults: Record<string, string | boolean> = { ndaId: "", effectiveDate
 
 function ndaRender(data: Record<string, string | boolean>) {
   return (
-    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 10 }}>
+    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11, display: "flex", flexDirection: "column", height: "100%" }}>
       <PageHeader title="Non-Disclosure Agreement" subtitle="Confidentiality Agreement" />
-      <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 9, color: grayText }}>
+      <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 10, color: grayText }}>
         <span>NDA ID: {val(data, "ndaId", "[___________]")}</span>
         <span>Effective Date: {val(data, "effectiveDate", "[___________]")}</span>
       </div>
@@ -192,9 +192,9 @@ function ndaRender(data: Record<string, string | boolean>) {
         <FR label="Receiving Party" value={val(data, "receivingParty")} />
         <FR label="Title / Role" value={val(data, "receivingTitle")} />
       </div>
-      <div style={sec}><div style={secH}>1. Purpose</div><p style={para}>The Parties wish to explore a potential business relationship relating to web development services and may disclose confidential information to each other.</p></div>
-      <div style={sec}><div style={secH}>2. Confidential Information</div><p style={para}>&quot;Confidential Information&quot; means all non-public information including: business plans, technical data, trade secrets, software code, design specs, client lists, pricing, marketing strategies, and financial data.</p></div>
-      <div style={sec}><div style={secH}>3. Obligations</div><p style={para}>Receiving Party agrees to: (a) hold information in strict confidence; (b) not disclose to third parties without consent; (c) use solely for the Purpose; (d) protect using reasonable care; (e) limit access to need-to-know employees.</p></div>
+      <div style={sec}><div style={secH}>1. Purpose</div><p style={para}>The Parties wish to explore a potential business relationship relating to web development services and may disclose confidential information.</p></div>
+      <div style={sec}><div style={secH}>2. Confidential Information</div><p style={para}>&quot;Confidential Information&quot; means all non-public information including: business plans, technical data, trade secrets, software code, design specs, client lists, pricing, and financial data.</p></div>
+      <div style={sec}><div style={secH}>3. Obligations</div><p style={para}>Receiving Party agrees to: (a) hold information in strict confidence; (b) not disclose to third parties; (c) use solely for the Purpose; (d) protect using reasonable care; (e) limit access to need-to-know employees.</p></div>
       <div style={sec}><div style={secH}>4. Exclusions</div><p style={para}>Not confidential if: (a) publicly available; (b) known prior to disclosure; (c) independently developed; (d) rightfully obtained from a third party.</p></div>
       <div style={sec}>
         <div style={secH}>5. Term</div>
@@ -203,7 +203,7 @@ function ndaRender(data: Record<string, string | boolean>) {
       </div>
       <div style={sec}><div style={secH}>6. Return of Information</div><p style={para}>Upon request or termination, promptly return or destroy all Confidential Information and copies.</p></div>
       <div style={sec}><div style={secH}>7. Remedies</div><p style={para}>Disclosing Party entitled to injunctive relief for any breach, plus other available remedies.</p></div>
-      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 16, gap: 40 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 10, gap: 40 }}>
         <SigBlock party="FrameMaxx (Disclosing)" /><SigBlock party="Receiving Party" />
       </div>
       <PageFooter />
@@ -270,9 +270,9 @@ function proposalRender(data: Record<string, string | boolean>) {
     { n: val(data, "m4", "[Milestone 4]"), t: val(data, "m4Time", "[Weeks]"), c: val(data, "m4Cost", "[$0]") },
   ];
   return (
-    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 10 }}>
+    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11, display: "flex", flexDirection: "column", height: "100%" }}>
       <PageHeader title="Project Proposal" subtitle="Web Development Services" />
-      <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 9, color: grayText }}>
+      <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 10, color: grayText }}>
         <span>Proposal ID: {val(data, "proposalId", "[___________]")}</span>
         <span>Date: {val(data, "date", "[___________]")}</span>
       </div>
@@ -282,12 +282,12 @@ function proposalRender(data: Record<string, string | boolean>) {
       <div style={sec}><div style={secH}>Proposed Solution</div><p style={para}>{val(data, "solution", "[Technical approach]")}</p></div>
       <div style={sec}>
         <div style={secH}>Deliverables & Milestones</div>
-        <div style={{ fontSize: 9, width: "100%" }}>
-          <div style={{ display: "flex", fontWeight: 700, borderBottom: `2px solid ${gold}`, paddingBottom: 3, marginBottom: 2 }}>
+        <div style={{ fontSize: 10, width: "100%" }}>
+          <div style={{ display: "flex", fontWeight: 700, borderBottom: `2px solid ${gold}`, paddingBottom: 2, marginBottom: 2 }}>
             <span style={{ flex: 0.5 }}>#</span><span style={{ flex: 2 }}>Milestone</span><span style={{ flex: 1 }}>Timeline</span><span style={{ flex: 1 }}>Cost</span>
           </div>
           {ms.map((m, i) => (
-            <div key={i} style={{ display: "flex", borderBottom: `1px solid ${borderColor}`, padding: "3px 0", color: grayText }}>
+            <div key={i} style={{ display: "flex", borderBottom: `1px solid ${borderColor}`, padding: "2px 0", color: grayText, fontSize: 10 }}>
               <span style={{ flex: 0.5 }}>{i + 1}</span><span style={{ flex: 2 }}>{m.n}</span><span style={{ flex: 1 }}>{m.t}</span><span style={{ flex: 1 }}>{m.c}</span>
             </div>
           ))}
@@ -365,37 +365,37 @@ function invoiceRender(data: Record<string, string | boolean>) {
     { d: val(data, "item3Desc", "[Service]"), q: val(data, "item3Qty", "1"), r: val(data, "item3Rate", "$0"), a: val(data, "item3Amount", "$0") },
   ];
   return (
-    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 10 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 10 }}>
-        <div><div style={{ fontSize: 8, color: gold, letterSpacing: 3, fontWeight: 700, marginBottom: 2 }}>FRAMEMAXX</div><div style={{ fontSize: 22, fontWeight: 700, color: darkText }}>INVOICE</div></div>
-        <div style={{ textAlign: "right", fontSize: 10, color: grayText }}>
-          <div style={{ fontWeight: 700, color: darkText, fontSize: 13 }}>#{val(data, "invoiceNumber", "[___________]")}</div>
+    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11, display: "flex", flexDirection: "column", height: "100%" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
+        <div><div style={{ fontSize: 9, color: gold, letterSpacing: 3, fontWeight: 700, marginBottom: 2 }}>FRAMEMAXX</div><div style={{ fontSize: 24, fontWeight: 700, color: darkText }}>INVOICE</div></div>
+        <div style={{ textAlign: "right", fontSize: 11, color: grayText }}>
+          <div style={{ fontWeight: 700, color: darkText, fontSize: 14 }}>#{val(data, "invoiceNumber", "[___________]")}</div>
           <div>Date: {val(data, "date", "[___________]")}</div>
           <div>Due: {val(data, "dueDate", "[___________]")}</div>
         </div>
       </div>
-      <div style={{ display: "flex", gap: 30, marginBottom: 8 }}>
-        <div style={{ flex: 1 }}><div style={secH}>From</div><div style={{ fontSize: 10, lineHeight: 1.5, color: grayText }}><strong style={{ color: darkText }}>FrameMaxx Web Development Agency</strong><br />{val(data, "fromAddress", "[Address]")}<br />{val(data, "fromEmail", "[Email]")} | {val(data, "fromPhone", "[Phone]")}</div></div>
-        <div style={{ flex: 1 }}><div style={secH}>Bill To</div><div style={{ fontSize: 10, lineHeight: 1.5, color: grayText }}><strong style={{ color: darkText }}>{val(data, "clientName", "[Client]")}</strong><br />{val(data, "clientCompany", "[Company]")}<br />{val(data, "clientAddress", "[Address]")}<br />{val(data, "clientEmail", "[Email]")}</div></div>
+      <div style={{ display: "flex", gap: 30, marginBottom: 6 }}>
+        <div style={{ flex: 1 }}><div style={secH}>From</div><div style={{ fontSize: 11, lineHeight: 1.4, color: grayText }}><strong style={{ color: darkText }}>FrameMaxx Web Development Agency</strong><br />{val(data, "fromAddress", "[Address]")}<br />{val(data, "fromEmail", "[Email]")} | {val(data, "fromPhone", "[Phone]")}</div></div>
+        <div style={{ flex: 1 }}><div style={secH}>Bill To</div><div style={{ fontSize: 11, lineHeight: 1.4, color: grayText }}><strong style={{ color: darkText }}>{val(data, "clientName", "[Client]")}</strong><br />{val(data, "clientCompany", "[Company]")}<br />{val(data, "clientAddress", "[Address]")}<br />{val(data, "clientEmail", "[Email]")}</div></div>
       </div>
       <div style={sec}><div style={secH}>Project</div><FR label="Project Name" value={val(data, "projectName")} /><FR label="Project ID" value={val(data, "projectId")} /></div>
       <div style={sec}>
-        <div style={{ fontSize: 9, width: "100%" }}>
-          <div style={{ display: "flex", fontWeight: 700, borderBottom: `2px solid ${gold}`, paddingBottom: 4, marginBottom: 2 }}>
+        <div style={{ fontSize: 10, width: "100%" }}>
+          <div style={{ display: "flex", fontWeight: 700, borderBottom: `2px solid ${gold}`, paddingBottom: 3, marginBottom: 2 }}>
             <span style={{ flex: 0.5 }}>#</span><span style={{ flex: 3 }}>Description</span><span style={{ flex: 0.7, textAlign: "center" }}>Qty</span><span style={{ flex: 1.2, textAlign: "right" }}>Rate</span><span style={{ flex: 1.2, textAlign: "right" }}>Amount</span>
           </div>
           {items.map((it, i) => (
-            <div key={i} style={{ display: "flex", borderBottom: `1px solid ${borderColor}`, padding: "4px 0", color: grayText, fontSize: 10 }}>
+            <div key={i} style={{ display: "flex", borderBottom: `1px solid ${borderColor}`, padding: "3px 0", color: grayText, fontSize: 10 }}>
               <span style={{ flex: 0.5 }}>{i + 1}</span><span style={{ flex: 3 }}>{it.d}</span><span style={{ flex: 0.7, textAlign: "center" }}>{it.q}</span><span style={{ flex: 1.2, textAlign: "right" }}>{it.r}</span><span style={{ flex: 1.2, textAlign: "right" }}>{it.a}</span>
             </div>
           ))}
         </div>
       </div>
-      <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 8 }}>
-        <div style={{ width: 220 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, padding: "3px 0", borderBottom: `1px solid ${borderColor}` }}><span style={{ color: grayText }}>Subtotal</span><span style={{ fontWeight: 600 }}>{val(data, "subtotal", "$0.00")}</span></div>
-          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, padding: "3px 0", borderBottom: `1px solid ${borderColor}` }}><span style={{ color: grayText }}>Tax</span><span style={{ fontWeight: 600 }}>{val(data, "tax", "$0.00")}</span></div>
-          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, padding: "5px 0", fontWeight: 700, borderBottom: `2px solid ${gold}` }}><span>Total Due</span><span style={{ color: gold }}>{val(data, "totalDue", "$0.00")}</span></div>
+      <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 6 }}>
+        <div style={{ width: 230 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, padding: "2px 0", borderBottom: `1px solid ${borderColor}` }}><span style={{ color: grayText }}>Subtotal</span><span style={{ fontWeight: 600 }}>{val(data, "subtotal", "$0.00")}</span></div>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, padding: "2px 0", borderBottom: `1px solid ${borderColor}` }}><span style={{ color: grayText }}>Tax</span><span style={{ fontWeight: 600 }}>{val(data, "tax", "$0.00")}</span></div>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, padding: "4px 0", fontWeight: 700, borderBottom: `2px solid ${gold}` }}><span>Total Due</span><span style={{ color: gold }}>{val(data, "totalDue", "$0.00")}</span></div>
         </div>
       </div>
       <div style={sec}>
@@ -406,7 +406,7 @@ function invoiceRender(data: Record<string, string | boolean>) {
         <FR label="Account Number" value={val(data, "accountNumber")} />
         <FR label="Routing Number" value={val(data, "routingNumber")} />
       </div>
-      <div style={{ textAlign: "center", fontSize: 9, color: lightGray, marginTop: 8 }}>Thank you for your business!</div>
+      <div style={{ textAlign: "center", fontSize: 10, color: lightGray, marginTop: 6 }}>Thank you for your business!</div>
       <PageFooter />
     </div>
   );
@@ -461,9 +461,9 @@ const projectBriefDefaults: Record<string, string | boolean> = {
 
 function projectBriefRender(data: Record<string, string | boolean>) {
   return (
-    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 10 }}>
+    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11, display: "flex", flexDirection: "column", height: "100%" }}>
       <PageHeader title="Project Brief" subtitle="Client Intake Questionnaire" />
-      <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 9, color: grayText }}>
+      <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 10, color: grayText }}>
         <span>Brief ID: {val(data, "briefId", "[___________]")}</span><span>Date: {val(data, "date", "[___________]")}</span>
       </div>
       <div style={sec}><div style={secH}>Client Information</div><FR label="Full Name" value={val(data, "fullName")} /><FR label="Email" value={val(data, "email")} /><FR label="Phone" value={val(data, "phone")} /><FR label="Company" value={val(data, "company")} /><FR label="Job Title" value={val(data, "jobTitle")} /></div>
@@ -526,31 +526,31 @@ function sowRender(data: Record<string, string | boolean>) {
     { n: "Launch", d: val(data, "p5Duration", "[X wks]") },
   ];
   return (
-    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 10 }}>
+    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11, display: "flex", flexDirection: "column", height: "100%" }}>
       <PageHeader title="Scope of Work" subtitle="Statement of Work" />
-      <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 9, color: grayText }}>
+      <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 10, color: grayText }}>
         <span>SOW ID: {val(data, "sowId", "[___________]")}</span><span>Date: {val(data, "date", "[___________]")}</span>
       </div>
       <div style={sec}><div style={secH}>Project Overview</div><FR label="Project Name" value={val(data, "projectName")} /><FR label="Client" value={val(data, "client")} /><FR label="Project Manager" value={val(data, "projectManager")} /><p style={para}>{val(data, "projectOverview", "[Overview]")}</p></div>
       <div style={sec}><div style={secH}>Objectives</div><p style={para}>1. {val(data, "obj1", "[Obj 1]")}<br />2. {val(data, "obj2", "[Obj 2]")}<br />3. {val(data, "obj3", "[Obj 3]")}<br />4. {val(data, "obj4", "[Obj 4]")}</p></div>
-      <div style={sec}><div style={secH}>In Scope</div><p style={para}>☐ Custom UI/UX design ☐ Responsive dev ☐ CMS integration ☐ User auth ☐ Payment gateway ☐ SEO optimization ☐ Performance optimization ☐ Cross-browser testing ☐ Deployment ☐ 30-day support</p></div>
-      <div style={sec}><div style={secH}>Out of Scope</div><p style={para}>☐ Content writing ☐ Photography ☐ Video production ☐ Ongoing maintenance ☐ Mobile app dev ☐ Third-party API dev</p></div>
+      <div style={sec}><div style={secH}>In Scope</div><p style={para}>Custom UI/UX design • Responsive dev • CMS integration • User auth • Payment gateway • SEO • Performance optimization • Cross-browser testing • Deployment • 30-day support</p></div>
+      <div style={sec}><div style={secH}>Out of Scope</div><p style={para}>Content writing • Photography • Video production • Ongoing maintenance • Mobile app dev • Third-party API dev</p></div>
       <div style={sec}><div style={secH}>Technical Specifications</div><FR label="Frontend" value={val(data, "frontend")} /><FR label="Backend" value={val(data, "backend")} /><FR label="Database" value={val(data, "database")} /><FR label="Hosting" value={val(data, "hosting")} /></div>
       <div style={sec}>
         <div style={secH}>Timeline</div>
-        <div style={{ fontSize: 9, width: "100%" }}>
-          <div style={{ display: "flex", fontWeight: 700, borderBottom: `2px solid ${gold}`, paddingBottom: 3, marginBottom: 2 }}>
+        <div style={{ fontSize: 10, width: "100%" }}>
+          <div style={{ display: "flex", fontWeight: 700, borderBottom: `2px solid ${gold}`, paddingBottom: 2, marginBottom: 2 }}>
             <span style={{ flex: 0.5 }}>#</span><span style={{ flex: 2 }}>Phase</span><span style={{ flex: 1 }}>Duration</span>
           </div>
           {phases.map((p, i) => (
-            <div key={p.n} style={{ display: "flex", borderBottom: `1px solid ${borderColor}`, padding: "3px 0", color: grayText }}>
+            <div key={p.n} style={{ display: "flex", borderBottom: `1px solid ${borderColor}`, padding: "2px 0", color: grayText, fontSize: 10 }}>
               <span style={{ flex: 0.5 }}>{i + 1}</span><span style={{ flex: 2 }}>{p.n}</span><span style={{ flex: 1 }}>{p.d}</span>
             </div>
           ))}
         </div>
       </div>
       <div style={sec}><div style={secH}>Assumptions</div><p style={para}>• Client provides content & assets within 5 business days • Client feedback within 48 hours per review • Third-party services are client&apos;s responsibility • Scope changes require formal Change Request</p></div>
-      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 12, gap: 40 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, gap: 40 }}>
         <SigBlock party="FrameMaxx" /><SigBlock party="Client" />
       </div>
       <PageFooter />
@@ -609,9 +609,9 @@ const changeRequestDefaults: Record<string, string | boolean> = {
 
 function changeRequestRender(data: Record<string, string | boolean>) {
   return (
-    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 10 }}>
+    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 11, display: "flex", flexDirection: "column", height: "100%" }}>
       <PageHeader title="Change Request Form" subtitle="Project Modification Request" />
-      <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 9, color: grayText }}>
+      <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 10, color: grayText }}>
         <span>CR ID: {val(data, "crId", "[___________]")}</span><span>Date: {val(data, "date", "[___________]")}</span>
       </div>
       <div style={sec}><div style={secH}>Project Information</div><FR label="Project Name" value={val(data, "projectName")} /><FR label="Project ID" value={val(data, "projectId")} /><FR label="Current Phase" value={val(data, "currentPhase")} /></div>
@@ -645,29 +645,29 @@ const privacyTermsDefaults: Record<string, string | boolean> = {
 
 function privacyTermsRender(data: Record<string, string | boolean>) {
   return (
-    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 9 }}>
+    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", color: darkText, fontSize: 10, display: "flex", flexDirection: "column", height: "100%" }}>
       <PageHeader title="Privacy Policy & Terms of Service" subtitle={`Effective: ${val(data, "effectiveDate", "[___________]")}`} />
-      <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 8, color: grayText }}>
+      <div style={{ ...sec, display: "flex", justifyContent: "space-between", fontSize: 9, color: grayText }}>
         <span>Doc ID: {val(data, "documentId", "[___________]")}</span>
         <span>Updated: {val(data, "lastUpdated", "[___________]")}</span>
       </div>
-      <div style={{ textAlign: "center", marginBottom: 6 }}><div style={{ fontSize: 13, fontWeight: 700, color: darkText }}>PRIVACY POLICY</div><div style={{ width: 40, height: 2, background: gold, margin: "4px auto" }}></div></div>
-      <div style={sec}><div style={secH}>1. Information We Collect</div><p style={para}>We collect information you provide through forms and communications: name, email, phone, business name, project details. We also automatically collect technical data: IP address, browser type, device info, and usage data via cookies.</p></div>
-      <div style={sec}><div style={secH}>2. How We Use Information</div><p style={para}>• Evaluate and respond to project requests • Communicate about project progress • Provide and improve services • Send relevant updates (with consent) • Comply with legal obligations • Protect rights and prevent fraud</p></div>
+      <div style={{ textAlign: "center", marginBottom: 4 }}><div style={{ fontSize: 14, fontWeight: 700, color: darkText }}>PRIVACY POLICY</div><div style={{ width: 40, height: 2, background: gold, margin: "3px auto" }}></div></div>
+      <div style={sec}><div style={secH}>1. Information We Collect</div><p style={para}>We collect information you provide: name, email, phone, business name, project details. We also automatically collect technical data: IP address, browser type, device info, and usage data via cookies.</p></div>
+      <div style={sec}><div style={secH}>2. How We Use Information</div><p style={para}>Evaluate project requests • Communicate about progress • Provide and improve services • Send relevant updates (with consent) • Comply with legal obligations • Protect rights and prevent fraud</p></div>
       <div style={sec}><div style={secH}>3. Information Sharing</div><p style={para}>We do not sell, trade, or rent personal information. May share with: trusted service providers, legal authorities when required, business partners with explicit consent.</p></div>
-      <div style={sec}><div style={secH}>4. Data Security</div><p style={para}>Industry-standard measures including encryption, secure servers, and access controls. No method is 100% secure.</p></div>
-      <div style={sec}><div style={secH}>5. Data Retention</div><p style={para}>Retained as long as necessary for outlined purposes. Project data retained up to 3 years after completion.</p></div>
+      <div style={sec}><div style={secH}>4. Data Security</div><p style={para}>Industry-standard measures including encryption, secure servers, and access controls.</p></div>
+      <div style={sec}><div style={secH}>5. Data Retention</div><p style={para}>Retained as long as necessary. Project data retained up to 3 years after completion.</p></div>
       <div style={sec}><div style={secH}>6. Your Rights</div><p style={para}>Access, correct, delete your data, object to processing, request portability, withdraw consent. Contact: {val(data, "contactEmail", "privacy@framemaxx.com")}</p></div>
       <div style={sec}><div style={secH}>7. Cookies</div><p style={para}>Uses cookies to enhance experience, analyze traffic, and personalize content. Control via browser settings.</p></div>
-      <div style={{ textAlign: "center", marginTop: 8, marginBottom: 6 }}><div style={{ fontSize: 13, fontWeight: 700, color: darkText }}>TERMS OF SERVICE</div><div style={{ width: 40, height: 2, background: gold, margin: "4px auto" }}></div></div>
+      <div style={{ textAlign: "center", marginTop: 6, marginBottom: 4 }}><div style={{ fontSize: 14, fontWeight: 700, color: darkText }}>TERMS OF SERVICE</div><div style={{ width: 40, height: 2, background: gold, margin: "3px auto" }}></div></div>
       <div style={sec}><div style={secH}>1. Acceptance</div><p style={para}>By accessing our website or engaging our services, you agree to these Terms.</p></div>
-      <div style={sec}><div style={secH}>2. Services</div><p style={para}>FrameMaxx provides web development, design, and digital services. Scope defined in individual project agreements.</p></div>
+      <div style={sec}><div style={secH}>2. Services</div><p style={para}>FrameMaxx provides web development, design, and digital services. Scope defined in project agreements.</p></div>
       <div style={sec}><div style={secH}>3. Client Responsibilities</div><p style={para}>Provide accurate info, deliver content timely, give feedback within agreed timeframes, ensure rights to provided assets, pay on schedule.</p></div>
       <div style={sec}><div style={secH}>4. Intellectual Property</div><p style={para}>Upon full payment, Client owns custom code and assets. FrameMaxx retains pre-existing tools and may showcase projects unless NDA in place.</p></div>
       <div style={sec}><div style={secH}>5. Limitation of Liability</div><p style={para}>Total liability shall not exceed fees paid. Not liable for indirect, incidental, or consequential damages.</p></div>
       <div style={sec}><div style={secH}>6. Dispute Resolution</div><p style={para}>Good-faith negotiation first, then binding arbitration if unresolved.</p></div>
       <div style={sec}><div style={secH}>7. Modifications</div><p style={para}>FrameMaxx may modify Terms at any time. Continued use constitutes acceptance.</p></div>
-      <div style={{ textAlign: "center", marginTop: 6, fontSize: 8, color: lightGray }}>Questions? Contact {val(data, "legalEmail", "legal@framemaxx.com")}</div>
+      <div style={{ textAlign: "center", marginTop: 4, fontSize: 9, color: lightGray }}>Questions? Contact {val(data, "legalEmail", "legal@framemaxx.com")}</div>
       <PageFooter />
     </div>
   );

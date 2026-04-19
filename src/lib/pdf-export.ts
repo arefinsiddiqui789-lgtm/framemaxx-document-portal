@@ -5,14 +5,19 @@ export async function exportToPdf(
   // Dynamic import to avoid SSR issues - html2pdf.js requires browser APIs
   const html2pdf = (await import("html2pdf.js")).default;
 
+  // 50px ≈ 13.23mm at 96 DPI — matching the A4 container padding
+  const marginMM = 13;
+
   const opt = {
-    margin: [10, 10, 10, 10],
+    margin: [marginMM, marginMM, marginMM, marginMM],
     filename: `${filename}.pdf`,
     image: { type: "jpeg", quality: 0.98 },
     html2canvas: {
       scale: 2,
       useCORS: true,
       letterRendering: true,
+      width: 794,
+      height: 1123,
     },
     jsPDF: {
       unit: "mm",
