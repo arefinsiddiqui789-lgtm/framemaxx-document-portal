@@ -59,14 +59,6 @@ const PROJECT_TYPES = [
 ];
 
 
-const TIMELINES = [
-  "Less than 1 month",
-  "1 - 2 months",
-  "2 - 3 months",
-  "3 - 6 months",
-  "6+ months",
-  "Flexible",
-];
 
 interface FormData {
   fullName: string;
@@ -655,16 +647,12 @@ export default function Home() {
                                 <Label className="text-sm font-medium text-foreground flex items-center gap-2">
                                   <Clock className="w-3.5 h-3.5 text-primary" />Project Timeline <span className="text-muted-foreground text-xs">(optional)</span>
                                 </Label>
-                                <Select value={formData.projectTimeline} onValueChange={(value) => updateField("projectTimeline", value)}>
-                                  <SelectTrigger className="bg-input/50 border-border/30 focus:border-primary/50 focus:ring-primary/20">
-                                    <SelectValue placeholder="Select timeline" />
-                                  </SelectTrigger>
-                                  <SelectContent className="bg-card border-border/50">
-                                    {TIMELINES.map((timeline) => (
-                                      <SelectItem key={timeline} value={timeline} className="focus:bg-primary/10 focus:text-primary">{timeline}</SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
+                                <Input
+                                  placeholder="e.g., 2-3 months"
+                                  value={formData.projectTimeline}
+                                  onChange={(e) => updateField("projectTimeline", e.target.value)}
+                                  className="bg-input/50 border-border/30 focus:border-primary/50 focus:ring-primary/20 placeholder:text-muted-foreground/50"
+                                />
                               </div>
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="space-y-2">
