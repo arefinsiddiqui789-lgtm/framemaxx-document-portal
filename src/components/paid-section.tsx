@@ -55,70 +55,100 @@ export function PaidSection() {
     }
   };
 
+  const generateRealisticSeal = async (): Promise<string> => {
+    return new Promise((resolve) => {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return resolve("");
+
+      const w = 600;
+      const h = 250;
+      canvas.width = w;
+      canvas.height = h;
+
+      const mainColor = "#D32F2F";
+      const sealW = 500;
+      const sealH = 180;
+
+      ctx.clearRect(0, 0, w, h);
+      ctx.translate(w / 2, h / 2);
+      ctx.rotate((-2 * Math.PI) / 180); // Slight natural tilt
+
+      // 1. Draw the Border
+      ctx.strokeStyle = mainColor;
+      ctx.lineWidth = 12;
+      ctx.lineJoin = "round";
+      ctx.strokeRect(-sealW / 2, -sealH / 2, sealW, sealH);
+
+      // 2. Draw the Text
+      ctx.fillStyle = mainColor;
+      ctx.font = "bold 140px Arial, sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("PAID", 0, 5);
+
+      // 3. Add Realistic "Stamp" Texture (Grunge)
+      // We randomly remove bits of the stamp to make it look weathered
+      ctx.globalCompositeOperation = "destination-out";
+      for (let i = 0; i < 2000; i++) {
+        const x = (Math.random() - 0.5) * w;
+        const y = (Math.random() - 0.5) * h;
+        const size = Math.random() * 3;
+        ctx.fillRect(x, y, size, size);
+      }
+
+      // Add some "ink splatter" (extra texture)
+      ctx.globalCompositeOperation = "source-over";
+      ctx.fillStyle = mainColor;
+      ctx.globalAlpha = 0.3;
+      for (let i = 0; i < 500; i++) {
+        const x = (Math.random() - 0.5) * w;
+        const y = (Math.random() - 0.5) * h;
+        const size = Math.random() * 2;
+        ctx.beginPath();
+        ctx.arc(x, y, size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      resolve(canvas.toDataURL("image/png"));
+    });
+  };
+
   const processPdf = async () => {
-    console.log("Starting PDF processing (Native Drawing)...");
+    console.log("Starting Realistic PDF processing...");
     const fileArrayBuffer = await file!.arrayBuffer();
     const pdfDoc = await PDFDocument.load(fileArrayBuffer);
-    console.log("PDF loaded successfully.");
     
+    // Generate the realistic seal image on the fly
+    const sealDataUrl = await generateRealisticSeal();
+    const sealImageBytes = await fetch(sealDataUrl).then(res => res.arrayBuffer());
+    const sealImage = await pdfDoc.embedPng(sealImageBytes);
+
     const pages = pdfDoc.getPages();
-    console.log(`Processing ${pages.length} pages...`);
-    
-    pages.forEach((page, index) => {
+    pages.forEach((page) => {
       const { width, height } = page.getSize();
-      const centerX = width / 2;
-      const centerY = height / 2;
-      const rotation = degrees(-15);
-      const color = rgb(0.8, 0.1, 0.1);
-
-      // Draw Main Border
-      page.drawRectangle({
-        x: centerX - 150,
-        y: centerY - 60,
-        width: 300,
-        height: 120,
-        borderColor: color,
-        borderWidth: 10,
-        rotate: rotation,
-        opacity: 0.8,
+      const sealWidth = 280;
+      const sealHeight = (sealImage.height / sealImage.width) * sealWidth;
+      
+      page.drawImage(sealImage, {
+        x: (width - sealWidth) / 2,
+        y: (height - sealHeight) / 2,
+        width: sealWidth,
+        height: sealHeight,
+        opacity: 0.85,
+        rotate: degrees(-15),
       });
-
-      // Draw Inner Border
-      page.drawRectangle({
-        x: centerX - 135,
-        y: centerY - 50,
-        width: 270,
-        height: 100,
-        borderColor: color,
-        borderWidth: 2,
-        rotate: rotation,
-        opacity: 0.6,
-      });
-
-      // Draw PAID Text
-      page.drawText("PAID", {
-        x: centerX - 110,
-        y: centerY - 40,
-        size: 90,
-        color: color,
-        rotate: rotation,
-        opacity: 0.9,
-      });
-      console.log(`Page ${index + 1} sealed.`);
     });
 
     const pdfBytes = await pdfDoc.save();
-    console.log("PDF saved to bytes.");
     const blob = new Blob([pdfBytes as any], { type: "application/pdf" });
-    const url = URL.createObjectURL(blob);
-    setProcessedFileUrl(url);
-    console.log("Processed PDF URL created:", url);
+    setProcessedFileUrl(URL.createObjectURL(blob));
   };
 
   const processImage = async () => {
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<void>(async (resolve, reject) => {
       const img = new Image();
-      img.onload = () => {
+      img.onload = async () => {
         const canvas = document.createElement("canvas");
         canvas.width = img.width;
         canvas.height = img.height;
@@ -127,47 +157,29 @@ export function PaidSection() {
 
         ctx.drawImage(img, 0, 0);
 
-        // Native Seal Drawing on Canvas
-        const sealWidth = img.width * 0.45;
-        const sealHeight = sealWidth * 0.4;
-        const centerX = img.width / 2;
-        const centerY = img.height / 2;
-        
-        ctx.save();
-        ctx.translate(centerX, centerY);
-        ctx.rotate((-15 * Math.PI) / 180);
-        
-        const mainColor = "#D32F2F";
-        
-        // Outer Rectangle
-        ctx.strokeStyle = mainColor;
-        ctx.lineWidth = Math.max(8, img.width * 0.015);
-        ctx.strokeRect(-sealWidth / 2, -sealHeight / 2, sealWidth, sealHeight);
-        
-        // Inner Rectangle
-        ctx.lineWidth = Math.max(2, img.width * 0.003);
-        ctx.setLineDash([img.width * 0.01, img.width * 0.005]);
-        ctx.strokeRect(-(sealWidth - 20) / 2, -(sealHeight - 20) / 2, sealWidth - 20, sealHeight - 20);
-        
-        // Text
-        ctx.fillStyle = mainColor;
-        ctx.font = `bold ${sealHeight * 0.75}px Arial, sans-serif`;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.globalAlpha = 0.9;
-        ctx.fillText("PAID", 0, 0);
-        
-        ctx.restore();
+        // Generate and draw the realistic seal
+        const sealImg = new Image();
+        sealImg.onload = () => {
+          const sealWidth = img.width * 0.45;
+          const sealHeight = (sealImg.height / sealImg.width) * sealWidth;
+          
+          ctx.save();
+          ctx.translate(img.width / 2, img.height / 2);
+          ctx.rotate((-15 * Math.PI) / 180);
+          ctx.globalAlpha = 0.85;
+          ctx.drawImage(sealImg, -sealWidth / 2, -sealHeight / 2, sealWidth, sealHeight);
+          ctx.restore();
 
-        canvas.toBlob((blob) => {
-          if (blob) {
-            const url = URL.createObjectURL(blob);
-            setProcessedFileUrl(url);
-            resolve();
-          } else {
-            reject(new Error("Canvas to blob failed"));
-          }
-        }, file!.type);
+          canvas.toBlob((blob) => {
+            if (blob) {
+              setProcessedFileUrl(URL.createObjectURL(blob));
+              resolve();
+            } else {
+              reject(new Error("Canvas to blob failed"));
+            }
+          }, file!.type);
+        };
+        sealImg.src = await generateRealisticSeal();
       };
       img.onerror = () => reject(new Error("Failed to load source image"));
       img.src = previewUrl!;
