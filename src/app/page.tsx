@@ -57,14 +57,6 @@ const PROJECT_TYPES = [
   { value: "custom-web-app", label: "Custom Web App", icon: "⚡" },
 ];
 
-const BUDGET_RANGES = [
-  "$500 - $1,000",
-  "$1,000 - $3,000",
-  "$3,000 - $5,000",
-  "$5,000 - $10,000",
-  "$10,000 - $25,000",
-  "$25,000+",
-];
 
 const TIMELINES = [
   "Less than 1 month",
@@ -647,16 +639,12 @@ export default function Home() {
                                 <Label className="text-sm font-medium text-foreground flex items-center gap-2">
                                   <DollarSign className="w-3.5 h-3.5 text-primary" />Budget Range <span className="text-muted-foreground text-xs">(optional)</span>
                                 </Label>
-                                <Select value={formData.budgetRange} onValueChange={(value) => updateField("budgetRange", value)}>
-                                  <SelectTrigger className="bg-input/50 border-border/30 focus:border-primary/50 focus:ring-primary/20">
-                                    <SelectValue placeholder="Select budget range" />
-                                  </SelectTrigger>
-                                  <SelectContent className="bg-card border-border/50">
-                                    {BUDGET_RANGES.map((range) => (
-                                      <SelectItem key={range} value={range} className="focus:bg-primary/10 focus:text-primary">{range}</SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
+                                <Input
+                                  placeholder="e.g., $1,500"
+                                  value={formData.budgetRange}
+                                  onChange={(e) => updateField("budgetRange", e.target.value)}
+                                  className="bg-input/50 border-border/30 focus:border-primary/50 focus:ring-primary/20 placeholder:text-muted-foreground/50"
+                                />
                               </div>
                               <div className="space-y-2">
                                 <Label className="text-sm font-medium text-foreground flex items-center gap-2">
