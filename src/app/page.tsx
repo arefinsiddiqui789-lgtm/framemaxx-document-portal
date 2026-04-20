@@ -21,10 +21,11 @@ import {
   Building2,
   Sparkles,
   ArrowUpRight,
-  FileText,
-  PenLine,
   Lock,
   BadgeCheck,
+  Calendar,
+  FileText,
+  PenLine,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -74,6 +75,8 @@ interface FormData {
   projectType: string;
   budgetRange: string;
   projectTimeline: string;
+  orderDate: string;
+  deliveryDate: string;
   featuresRequired: string;
   referenceWebsites: string;
   additionalNotes: string;
@@ -87,6 +90,8 @@ const initialFormData: FormData = {
   projectType: "",
   budgetRange: "",
   projectTimeline: "",
+  orderDate: "",
+  deliveryDate: "",
   featuresRequired: "",
   referenceWebsites: "",
   additionalNotes: "",
@@ -661,6 +666,24 @@ export default function Home() {
                                   </SelectContent>
                                 </Select>
                               </div>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                  <Label className="text-sm font-medium text-foreground flex items-center gap-2">
+                                    <Calendar className="w-3.5 h-3.5 text-primary" />Order Date <span className="text-muted-foreground text-xs">(optional)</span>
+                                  </Label>
+                                  <Input type="date" value={formData.orderDate} onChange={(e) => updateField("orderDate", e.target.value)}
+                                    className="bg-input/50 border-border/30 focus:border-primary/50 focus:ring-primary/20 [color-scheme:dark]"
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label className="text-sm font-medium text-foreground flex items-center gap-2">
+                                    <Calendar className="w-3.5 h-3.5 text-primary" />Delivery Date <span className="text-muted-foreground text-xs">(optional)</span>
+                                  </Label>
+                                  <Input type="date" value={formData.deliveryDate} onChange={(e) => updateField("deliveryDate", e.target.value)}
+                                    className="bg-input/50 border-border/30 focus:border-primary/50 focus:ring-primary/20 [color-scheme:dark]"
+                                  />
+                                </div>
+                              </div>
                               <div className="space-y-2">
                                 <Label htmlFor="featuresRequired" className="text-sm font-medium text-foreground flex items-center gap-2">
                                   <ListChecks className="w-3.5 h-3.5 text-primary" />Features Required <span className="text-muted-foreground text-xs">(optional)</span>
@@ -732,6 +755,18 @@ export default function Home() {
                                     <div className="flex justify-between">
                                       <span className="text-muted-foreground">Timeline</span>
                                       <span className="text-foreground font-medium">{formData.projectTimeline}</span>
+                                    </div>
+                                  )}
+                                  {formData.orderDate && (
+                                    <div className="flex justify-between">
+                                      <span className="text-muted-foreground">Order Date</span>
+                                      <span className="text-foreground font-medium">{formData.orderDate}</span>
+                                    </div>
+                                  )}
+                                  {formData.deliveryDate && (
+                                    <div className="flex justify-between">
+                                      <span className="text-muted-foreground">Delivery</span>
+                                      <span className="text-foreground font-medium">{formData.deliveryDate}</span>
                                     </div>
                                   )}
                                 </div>
