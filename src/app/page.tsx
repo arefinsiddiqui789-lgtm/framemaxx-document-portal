@@ -24,6 +24,7 @@ import {
   FileText,
   PenLine,
   Lock,
+  BadgeCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,6 +48,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { DocumentsGallery } from "@/components/documents-gallery";
+import { PaidSection } from "@/components/paid-section";
 
 const PROJECT_TYPES = [
   { value: "portfolio", label: "Portfolio", icon: "🎯" },
@@ -101,7 +103,7 @@ const initialFormData: FormData = {
 
 const STEP_COUNT = 3;
 
-type ActiveView = "intake" | "documents";
+type ActiveView = "intake" | "documents" | "paid";
 
 export default function Home() {
   const [isAuthorized, setIsAuthorized] = useState(false);
@@ -244,6 +246,17 @@ export default function Home() {
           >
             <FileText className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Documents</span>
+          </button>
+          <button
+            onClick={() => setActiveView("paid")}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+              activeView === "paid"
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <BadgeCheck className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">PAID</span>
           </button>
         </div>
 
@@ -478,7 +491,7 @@ export default function Home() {
       <main className="flex-1 py-8 sm:py-12" ref={formRef}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <AnimatePresence mode="wait">
-            {activeView === "intake" ? (
+            {activeView === "intake" && (
               <motion.div
                 key="intake"
                 initial={{ opacity: 0, x: -20 }}
@@ -834,7 +847,8 @@ export default function Home() {
                   </motion.div>
                 </div>
               </motion.div>
-            ) : (
+            )}
+            {activeView === "documents" && (
               <motion.div
                 key="documents"
                 initial={{ opacity: 0, x: 20 }}
@@ -843,6 +857,17 @@ export default function Home() {
                 transition={{ duration: 0.3 as const }}
               >
                 <DocumentsGallery />
+              </motion.div>
+            )}
+            {activeView === "paid" && (
+              <motion.div
+                key="paid"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 1.05 }}
+                transition={{ duration: 0.3 as const }}
+              >
+                <PaidSection />
               </motion.div>
             )}
           </AnimatePresence>
