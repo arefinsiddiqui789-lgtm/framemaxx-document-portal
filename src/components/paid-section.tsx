@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Upload, FileText, ImageIcon, Download, CheckCircle2, Loader2, X, RefreshCcw, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { PDFDocument, degrees } from "pdf-lib";
+import { PDFDocument, degrees, rgb } from "pdf-lib";
 import { toast } from "sonner";
 
 export function PaidSection() {
@@ -56,39 +56,63 @@ export function PaidSection() {
   };
 
   const processPdf = async () => {
+    console.log("Starting PDF processing (Native Drawing)...");
     const fileArrayBuffer = await file!.arrayBuffer();
     const pdfDoc = await PDFDocument.load(fileArrayBuffer);
+    console.log("PDF loaded successfully.");
     
-    // Load the seal image
-    const sealImageBytes = await fetch("/paid-seal.png").then((res) => {
-      if (!res.ok) throw new Error("Seal image not found");
-      return res.arrayBuffer();
-    });
-    
-    // We assume it's PNG since I generated it as such
-    const sealImage = await pdfDoc.embedPng(sealImageBytes);
-
     const pages = pdfDoc.getPages();
-    pages.forEach((page) => {
+    console.log(`Processing ${pages.length} pages...`);
+    
+    pages.forEach((page, index) => {
       const { width, height } = page.getSize();
-      
-      const sealWidth = 250;
-      const sealHeight = (sealImage.height / sealImage.width) * sealWidth;
-      
-      page.drawImage(sealImage, {
-        x: (width - sealWidth) / 2,
-        y: (height - sealHeight) / 2,
-        width: sealWidth,
-        height: sealHeight,
-        opacity: 0.85,
-        rotate: degrees(-15),
+      const centerX = width / 2;
+      const centerY = height / 2;
+      const rotation = degrees(-15);
+      const color = rgb(0.8, 0.1, 0.1);
+
+      // Draw Main Border
+      page.drawRectangle({
+        x: centerX - 150,
+        y: centerY - 60,
+        width: 300,
+        height: 120,
+        borderColor: color,
+        borderWidth: 10,
+        rotate: rotation,
+        opacity: 0.8,
       });
+
+      // Draw Inner Border
+      page.drawRectangle({
+        x: centerX - 135,
+        y: centerY - 50,
+        width: 270,
+        height: 100,
+        borderColor: color,
+        borderWidth: 2,
+        rotate: rotation,
+        opacity: 0.6,
+      });
+
+      // Draw PAID Text
+      page.drawText("PAID", {
+        x: centerX - 110,
+        y: centerY - 40,
+        size: 90,
+        color: color,
+        rotate: rotation,
+        opacity: 0.9,
+      });
+      console.log(`Page ${index + 1} sealed.`);
     });
 
     const pdfBytes = await pdfDoc.save();
+    console.log("PDF saved to bytes.");
     const blob = new Blob([pdfBytes as any], { type: "application/pdf" });
     const url = URL.createObjectURL(blob);
     setProcessedFileUrl(url);
+    console.log("Processed PDF URL created:", url);
   };
 
   const processImage = async () => {
@@ -103,30 +127,47 @@ export function PaidSection() {
 
         ctx.drawImage(img, 0, 0);
 
-        const seal = new Image();
-        seal.onload = () => {
-          const sealWidth = img.width * 0.4;
-          const sealHeight = (seal.height / seal.width) * sealWidth;
-          
-          ctx.save();
-          ctx.translate(img.width / 2, img.height / 2);
-          ctx.rotate((-15 * Math.PI) / 180);
-          ctx.globalAlpha = 0.85;
-          ctx.drawImage(seal, -sealWidth / 2, -sealHeight / 2, sealWidth, sealHeight);
-          ctx.restore();
+        // Native Seal Drawing on Canvas
+        const sealWidth = img.width * 0.45;
+        const sealHeight = sealWidth * 0.4;
+        const centerX = img.width / 2;
+        const centerY = img.height / 2;
+        
+        ctx.save();
+        ctx.translate(centerX, centerY);
+        ctx.rotate((-15 * Math.PI) / 180);
+        
+        const mainColor = "#D32F2F";
+        
+        // Outer Rectangle
+        ctx.strokeStyle = mainColor;
+        ctx.lineWidth = Math.max(8, img.width * 0.015);
+        ctx.strokeRect(-sealWidth / 2, -sealHeight / 2, sealWidth, sealHeight);
+        
+        // Inner Rectangle
+        ctx.lineWidth = Math.max(2, img.width * 0.003);
+        ctx.setLineDash([img.width * 0.01, img.width * 0.005]);
+        ctx.strokeRect(-(sealWidth - 20) / 2, -(sealHeight - 20) / 2, sealWidth - 20, sealHeight - 20);
+        
+        // Text
+        ctx.fillStyle = mainColor;
+        ctx.font = `bold ${sealHeight * 0.75}px Arial, sans-serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.globalAlpha = 0.9;
+        ctx.fillText("PAID", 0, 0);
+        
+        ctx.restore();
 
-          canvas.toBlob((blob) => {
-            if (blob) {
-              const url = URL.createObjectURL(blob);
-              setProcessedFileUrl(url);
-              resolve();
-            } else {
-              reject(new Error("Canvas to blob failed"));
-            }
-          }, file!.type);
-        };
-        seal.onerror = () => reject(new Error("Failed to load seal image"));
-        seal.src = "/paid-seal.png";
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const url = URL.createObjectURL(blob);
+            setProcessedFileUrl(url);
+            resolve();
+          } else {
+            reject(new Error("Canvas to blob failed"));
+          }
+        }, file!.type);
       };
       img.onerror = () => reject(new Error("Failed to load source image"));
       img.src = previewUrl!;
@@ -235,16 +276,26 @@ export function PaidSection() {
 
               <div className="aspect-[4/3] sm:aspect-video bg-muted/20 rounded-2xl border border-border/20 overflow-hidden relative flex items-center justify-center group shadow-inner">
                 {file.type === "application/pdf" ? (
-                  <div className="flex flex-col items-center gap-4 text-center p-10">
-                    <div className="relative">
-                      <FileText className="w-20 h-20 text-muted-foreground/20" />
-                      {isDone && <CheckCircle2 className="w-8 h-8 text-primary absolute -bottom-1 -right-1 bg-background rounded-full" />}
+                  isDone && processedFileUrl ? (
+                    <iframe
+                      src={`${processedFileUrl}#toolbar=0&navpanes=0&scrollbar=0`}
+                      className="w-full h-full border-none"
+                      title="PDF Preview"
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center gap-4 text-center p-10">
+                      <div className="relative">
+                        <FileText className="w-20 h-20 text-muted-foreground/20" />
+                        {isDone && <CheckCircle2 className="w-8 h-8 text-primary absolute -bottom-1 -right-1 bg-background rounded-full" />}
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-foreground">PDF Preview</p>
+                        <p className="text-xs text-muted-foreground">
+                          {isDone ? "Processing complete!" : "Preview will appear after applying seal."}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm font-bold text-foreground">PDF Preview</p>
-                      <p className="text-xs text-muted-foreground">Detailed preview is available after downloading</p>
-                    </div>
-                  </div>
+                  )
                 ) : (
                   <img
                     src={processedFileUrl || previewUrl!}
@@ -262,19 +313,6 @@ export function PaidSection() {
                       </div>
                     </div>
                     <p className="text-sm font-bold text-primary animate-pulse tracking-widest uppercase">Applying Official Seal</p>
-                  </div>
-                )}
-
-                {isDone && file.type === "application/pdf" && (
-                  <div className="absolute inset-0 bg-primary/5 flex items-center justify-center flex-col gap-3 backdrop-blur-[1px]">
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ type: "spring", stiffness: 200 }}
-                    >
-                      <CheckCircle2 className="w-16 h-16 text-primary" />
-                    </motion.div>
-                    <p className="font-black text-primary text-xl tracking-tighter">PDF SEALED & READY</p>
                   </div>
                 )}
               </div>
