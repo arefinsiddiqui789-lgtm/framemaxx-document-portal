@@ -30,6 +30,8 @@ export async function POST(request: NextRequest) {
       projectType,
       budgetRange,
       projectTimeline,
+      orderDate,
+      deliveryDate,
       featuresRequired,
       referenceWebsites,
       additionalNotes,
@@ -61,7 +63,7 @@ export async function POST(request: NextRequest) {
 
     if (!projectType || !projectType.trim()) {
       return NextResponse.json(
-        { error: "Project type is required" },
+        { error: "Please select a Project Type" },
         { status: 400 }
       );
     }
@@ -80,6 +82,8 @@ export async function POST(request: NextRequest) {
       projectType: projectType.trim(),
       budgetRange: budgetRange?.trim() || "",
       projectTimeline: projectTimeline?.trim() || "",
+      orderDate: orderDate?.trim() || "",
+      deliveryDate: deliveryDate?.trim() || "",
       featuresRequired: featuresRequired?.trim() || "",
       referenceWebsites: referenceWebsites?.trim() || "",
       additionalNotes: additionalNotes?.trim() || "",
@@ -95,7 +99,26 @@ export async function POST(request: NextRequest) {
       timestamp
     );
 
-    const agencyEmail = process.env.AGENCY_EMAIL || process.env.SMTP_USER || "";
+    const agencyEmail = process.env.AGENCY_EMAIL || process.env.SMTP_USER || "framemaxx26@gmail.com";
+
+    // Google Sheets Integration
+    const sheetWebhookUrl = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
+    if (sheetWebhookUrl) {
+      try {
+        await fetch(sheetWebhookUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            submissionId,
+            timestamp,
+            ...data
+          }),
+        });
+        console.log("Data sent to Google Sheets successfully");
+      } catch (sheetError) {
+        console.error("Failed to append to Google Sheets:", sheetError);
+      }
+    }
 
     // Check if SMTP is configured
     if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
@@ -111,6 +134,8 @@ export async function POST(request: NextRequest) {
       console.log(`Project Type: ${data.projectType}`);
       console.log(`Budget: ${data.budgetRange || "N/A"}`);
       console.log(`Timeline: ${data.projectTimeline || "N/A"}`);
+      console.log(`Order Date: ${data.orderDate || "N/A"}`);
+      console.log(`Delivery Date: ${data.deliveryDate || "N/A"}`);
       console.log(`Features: ${data.featuresRequired || "N/A"}`);
       console.log(`References: ${data.referenceWebsites || "N/A"}`);
       console.log(`Notes: ${data.additionalNotes || "N/A"}`);
@@ -120,7 +145,7 @@ export async function POST(request: NextRequest) {
         success: true,
         submissionId,
         message:
-          "Your project request has been submitted successfully. FrameMaxx will contact you soon.",
+          "Your project request has been submitted successfully to Google Sheets and our team. FrameMaxx will contact you soon.",
         devMode: true,
       });
     }

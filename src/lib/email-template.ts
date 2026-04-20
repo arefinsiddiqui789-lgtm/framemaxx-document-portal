@@ -7,6 +7,8 @@ export interface ClientFormData {
   projectType: string;
   budgetRange: string;
   projectTimeline: string;
+  orderDate: string;
+  deliveryDate: string;
   featuresRequired: string;
   referenceWebsites: string;
   additionalNotes: string;
@@ -239,6 +241,14 @@ export function generateAgencyEmail(
         <span class="field-label">Project Timeline:</span>
         <span class="field-value">${escapeHtml(data.projectTimeline || "Not specified")}</span>
       </div>
+      <div class="field-row">
+        <span class="field-label">Order Date:</span>
+        <span class="field-value">${escapeHtml(data.orderDate || "Not specified")}</span>
+      </div>
+      <div class="field-row">
+        <span class="field-label">Delivery Date:</span>
+        <span class="field-value">${escapeHtml(data.deliveryDate || "Not specified")}</span>
+      </div>
     </div>
 
     <!-- Features Required -->
@@ -405,6 +415,14 @@ export function generateClientConfirmationEmail(
           <div class="summary-row">
             <span class="summary-label">Timeline:</span>
             <span class="summary-value">${escapeHtml(data.projectTimeline || "Not specified")}</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Order Date:</span>
+            <span class="summary-value">${escapeHtml(data.orderDate || "Not specified")}</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Delivery Date:</span>
+            <span class="summary-value">${escapeHtml(data.deliveryDate || "Not specified")}</span>
           </div>
         </div>
       </div>
