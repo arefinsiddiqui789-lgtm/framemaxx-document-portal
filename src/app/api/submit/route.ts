@@ -103,9 +103,12 @@ export async function POST(request: NextRequest) {
 
     // Google Sheets Integration
     const sheetWebhookUrl = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
+    console.log("Sheet Webhook URL configured:", !!sheetWebhookUrl);
+
     if (sheetWebhookUrl) {
       try {
-        await fetch(sheetWebhookUrl, {
+        console.log("Sending data to Google Sheets...");
+        const sheetResponse = await fetch(sheetWebhookUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -113,8 +116,14 @@ export async function POST(request: NextRequest) {
             timestamp,
             ...data
           }),
+          redirect: "follow", // Important for Google Apps Script redirects
         });
-        console.log("Data sent to Google Sheets successfully");
+        
+        if (sheetResponse.ok) {
+          console.log("Data sent to Google Sheets successfully (Status: OK)");
+        } else {
+          console.warn("Google Sheets responded with error:", sheetResponse.status, sheetResponse.statusText);
+        }
       } catch (sheetError) {
         console.error("Failed to append to Google Sheets:", sheetError);
       }
