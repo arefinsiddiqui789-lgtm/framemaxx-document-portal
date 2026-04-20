@@ -66,7 +66,7 @@ export function PaidSection() {
       canvas.width = w;
       canvas.height = h;
 
-      const mainColor = "#D32F2F";
+      const mainColor = "#B71C1C"; // Deeper, more realistic red
       const sealW = 500;
       const sealH = 180;
 
@@ -76,7 +76,7 @@ export function PaidSection() {
 
       // 1. Draw the Border
       ctx.strokeStyle = mainColor;
-      ctx.lineWidth = 12;
+      ctx.lineWidth = 15; // Slightly thicker for clarity
       ctx.lineJoin = "round";
       ctx.strokeRect(-sealW / 2, -sealH / 2, sealW, sealH);
 
@@ -90,17 +90,17 @@ export function PaidSection() {
       // 3. Add Realistic "Stamp" Texture (Grunge)
       // We randomly remove bits of the stamp to make it look weathered
       ctx.globalCompositeOperation = "destination-out";
-      for (let i = 0; i < 2000; i++) {
+      for (let i = 0; i < 1500; i++) { // Slightly fewer dots for more clarity
         const x = (Math.random() - 0.5) * w;
         const y = (Math.random() - 0.5) * h;
-        const size = Math.random() * 3;
+        const size = Math.random() * 2.5; 
         ctx.fillRect(x, y, size, size);
       }
 
       // Add some "ink splatter" (extra texture)
       ctx.globalCompositeOperation = "source-over";
       ctx.fillStyle = mainColor;
-      ctx.globalAlpha = 0.3;
+      ctx.globalAlpha = 0.4; // More ink saturation
       for (let i = 0; i < 500; i++) {
         const x = (Math.random() - 0.5) * w;
         const y = (Math.random() - 0.5) * h;
