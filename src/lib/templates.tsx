@@ -253,7 +253,7 @@ function ndaRender(data: Record<string, string | boolean>) {
   );
 }
 
-// ─── 3. PROPOSAL ─────────────────────────────────────────────────────
+// ─── 3. PROPOSAL ───────────────────────────────────────────
 
 const proposalFields: FieldGroup[] = [
   { title: "Document Info", fields: [

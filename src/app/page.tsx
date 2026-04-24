@@ -26,6 +26,7 @@ import {
   Calendar,
   FileText,
   PenLine,
+  Users,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -92,7 +93,7 @@ const initialFormData: FormData = {
 
 const STEP_COUNT = 3;
 
-type ActiveView = "intake" | "documents" | "paid";
+type ActiveView = "intake" | "documents" | "paid" | "clientInfo";
 
 export default function Home() {
   const [isAuthorized, setIsAuthorized] = useState(false);
@@ -246,6 +247,17 @@ export default function Home() {
           >
             <BadgeCheck className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">PAID</span>
+          </button>
+          <button
+            onClick={() => setActiveView("clientInfo")}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+              activeView === "clientInfo"
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <Users className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Client Info</span>
           </button>
         </div>
 
@@ -879,6 +891,93 @@ export default function Home() {
                 transition={{ duration: 0.3 as const }}
               >
                 <PaidSection />
+              </motion.div>
+            )}
+
+            {activeView === "clientInfo" && (
+              <motion.div
+                key="clientInfo"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.3 as const }}
+              >
+                <div className="max-w-2xl mx-auto">
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="text-center mb-10"
+                  >
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-5">
+                      <Briefcase className="w-3.5 h-3.5 text-primary" />
+                      <span className="text-xs font-medium text-primary tracking-wide uppercase">
+                        Management Portal
+                      </span>
+                    </div>
+                    <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-3 leading-tight">
+                      Client <span className="text-primary">Info</span>
+                    </h1>
+                    <p className="text-muted-foreground max-w-md mx-auto leading-relaxed">
+                      Monitor project progress and update client status information.
+                    </p>
+                  </motion.div>
+
+                  <Card className="bg-card border-border/50 overflow-hidden shadow-2xl">
+                    <div className="h-1.5 bg-gradient-to-r from-primary/50 via-primary to-primary/50" />
+                    <CardContent className="p-6 sm:p-10 space-y-8">
+                      <div className="space-y-6">
+                        <div className="space-y-2">
+                          <Label htmlFor="companyName" className="text-sm font-semibold text-foreground flex items-center gap-2 ml-1">
+                            <Building2 className="w-3.5 h-3.5 text-primary" /> Name of company
+                          </Label>
+                          <Input 
+                            id="companyName" 
+                            placeholder="Enter company name"
+                            className="bg-input/50 h-12 border-border/30 focus:border-primary/50 focus:ring-primary/20 placeholder:text-muted-foreground/40 rounded-xl"
+                          />
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="date" className="text-sm font-semibold text-foreground flex items-center gap-2 ml-1">
+                            <Calendar className="w-3.5 h-3.5 text-primary" /> Date
+                          </Label>
+                          <Input 
+                            id="date" 
+                            type="date"
+                            className="bg-input/50 h-12 border-border/30 focus:border-primary/50 focus:ring-primary/20 [color-scheme:dark] rounded-xl"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="result" className="text-sm font-semibold text-foreground flex items-center gap-2 ml-1">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-primary" /> Result
+                          </Label>
+                          <Input 
+                            id="result" 
+                            placeholder="Enter project result"
+                            className="bg-input/50 h-12 border-border/30 focus:border-primary/50 focus:ring-primary/20 placeholder:text-muted-foreground/40 rounded-xl"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="status" className="text-sm font-semibold text-foreground flex items-center gap-2 ml-1">
+                            <Clock className="w-3.5 h-3.5 text-primary" /> Status
+                          </Label>
+                          <Input 
+                            id="status" 
+                            placeholder="Enter current status"
+                            className="bg-input/50 h-12 border-border/30 focus:border-primary/50 focus:ring-primary/20 placeholder:text-muted-foreground/40 rounded-xl"
+                          />
+                        </div>
+                      </div>
+                      
+                      <Button className="w-full h-12 bg-primary text-primary-foreground hover:bg-primary/90 font-bold tracking-wide rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-[0.98]">
+                        Update Client Record
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
