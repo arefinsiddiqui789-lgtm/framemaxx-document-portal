@@ -51,6 +51,7 @@ import {
 } from "@/components/ui/dialog";
 import { DocumentsGallery } from "@/components/documents-gallery";
 import { PaidSection } from "@/components/paid-section";
+import { toast } from "sonner";
 
 const PROJECT_TYPES = [
   { value: "portfolio", label: "Portfolio", icon: "🎯" },
@@ -120,6 +121,44 @@ export default function Home() {
   const [submissionId, setSubmissionId] = useState("");
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
   const formRef = useRef<HTMLDivElement>(null);
+
+  // Client Info Section States
+  const [clientInfoData, setClientInfoData] = useState({
+    companyName: "",
+    date: "",
+    result: "",
+    status: ""
+  });
+  const [isUpdatingClient, setIsUpdatingClient] = useState(false);
+
+  const handleClientInfoSubmit = async () => {
+    if (!clientInfoData.companyName.trim()) {
+      toast.error("Company name is required");
+      return;
+    }
+
+    setIsUpdatingClient(true);
+    try {
+      const response = await fetch("/api/client-info", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(clientInfoData),
+      });
+
+      if (response.ok) {
+        toast.success("Client information updated successfully!");
+        // Optional: Reset form or leave as is
+      } else {
+        const data = await response.json();
+        toast.error(data.error || "Failed to update client record.");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Network error. Please check your connection.");
+    } finally {
+      setIsUpdatingClient(false);
+    }
+  };
 
   const updateField = (field: keyof FormData, value: string | boolean) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -934,6 +973,8 @@ export default function Home() {
                           <Input 
                             id="companyName" 
                             placeholder="Enter company name"
+                            value={clientInfoData.companyName}
+                            onChange={(e) => setClientInfoData(prev => ({ ...prev, companyName: e.target.value }))}
                             className="bg-input/50 h-12 border-border/30 focus:border-primary/50 focus:ring-primary/20 placeholder:text-muted-foreground/40 rounded-xl"
                           />
                         </div>
@@ -945,6 +986,8 @@ export default function Home() {
                           <Input 
                             id="date" 
                             type="date"
+                            value={clientInfoData.date}
+                            onChange={(e) => setClientInfoData(prev => ({ ...prev, date: e.target.value }))}
                             className="bg-input/50 h-12 border-border/30 focus:border-primary/50 focus:ring-primary/20 [color-scheme:dark] rounded-xl"
                           />
                         </div>
@@ -956,6 +999,8 @@ export default function Home() {
                           <Input 
                             id="result" 
                             placeholder="Enter project result"
+                            value={clientInfoData.result}
+                            onChange={(e) => setClientInfoData(prev => ({ ...prev, result: e.target.value }))}
                             className="bg-input/50 h-12 border-border/30 focus:border-primary/50 focus:ring-primary/20 placeholder:text-muted-foreground/40 rounded-xl"
                           />
                         </div>
@@ -967,13 +1012,26 @@ export default function Home() {
                           <Input 
                             id="status" 
                             placeholder="Enter current status"
+                            value={clientInfoData.status}
+                            onChange={(e) => setClientInfoData(prev => ({ ...prev, status: e.target.value }))}
                             className="bg-input/50 h-12 border-border/30 focus:border-primary/50 focus:ring-primary/20 placeholder:text-muted-foreground/40 rounded-xl"
                           />
                         </div>
                       </div>
                       
-                      <Button className="w-full h-12 bg-primary text-primary-foreground hover:bg-primary/90 font-bold tracking-wide rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-[0.98]">
-                        Update Client Record
+                      <Button 
+                        onClick={handleClientInfoSubmit}
+                        disabled={isUpdatingClient}
+                        className="w-full h-12 bg-primary text-primary-foreground hover:bg-primary/90 font-bold tracking-wide rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
+                      >
+                        {isUpdatingClient ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Updating...
+                          </>
+                        ) : (
+                          "Update Client Record"
+                        )}
                       </Button>
                     </CardContent>
                   </Card>
