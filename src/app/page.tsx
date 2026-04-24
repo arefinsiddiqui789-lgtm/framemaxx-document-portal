@@ -945,20 +945,20 @@ export default function Home() {
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                    className="text-center mb-10"
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                    className="text-center mb-12"
                   >
-                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-5">
-                      <Briefcase className="w-3.5 h-3.5 text-primary" />
-                      <span className="text-xs font-medium text-primary tracking-wide uppercase">
-                        Management Portal
+                    <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-primary/5 border border-primary/10 mb-6 backdrop-blur-md shadow-[0_0_20px_rgba(var(--primary),0.05)]">
+                      <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                      <span className="text-[11px] font-bold text-primary tracking-[0.2em] uppercase">
+                        Management System
                       </span>
                     </div>
-                    <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-3 leading-tight">
-                      Client <span className="text-primary">Info</span>
+                    <h1 className="text-4xl sm:text-5xl font-extrabold text-foreground mb-4 tracking-tight leading-none">
+                      Dynamic <span className="bg-gradient-to-br from-primary via-primary to-primary/70 bg-clip-text text-transparent">Client Info</span>
                     </h1>
-                    <p className="text-muted-foreground max-w-md mx-auto leading-relaxed">
-                      Monitor project progress and update client status information.
+                    <p className="text-muted-foreground text-sm sm:text-base max-w-lg mx-auto leading-relaxed font-medium opacity-80">
+                      Orchestrate your client relationships and project outcomes with precision and elite-grade tracking tools.
                     </p>
                   </motion.div>
 
