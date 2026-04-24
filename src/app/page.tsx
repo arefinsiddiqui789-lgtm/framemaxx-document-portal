@@ -129,7 +129,8 @@ export default function Home() {
     date: "",
     result: "",
     color: "#D4AF37",
-    status: ""
+    status: "",
+    statusColor: "#10B981"
   });
   const [isUpdatingClient, setIsUpdatingClient] = useState(false);
 
@@ -1056,6 +1057,44 @@ export default function Home() {
                             onChange={(e) => setClientInfoData(prev => ({ ...prev, status: e.target.value }))}
                             className="bg-input/50 h-12 border-border/30 focus:border-primary/50 focus:ring-primary/20 placeholder:text-muted-foreground/40 rounded-xl"
                           />
+                        </div>
+
+                        <div className="space-y-4">
+                          <Label className="text-sm font-semibold text-foreground flex items-center gap-2 ml-1">
+                            <Palette className="w-3.5 h-3.5 text-primary" /> Status Accent Color
+                          </Label>
+                          
+                          <div className="flex flex-wrap items-center gap-3 p-4 bg-muted/30 rounded-2xl border border-border/20">
+                            {/* Professional Presets */}
+                            {["#D4AF37", "#1A1A1A", "#3B82F6", "#10B981", "#EF4444", "#8B5CF6"].map((c) => (
+                              <button
+                                key={c}
+                                type="button"
+                                onClick={() => setClientInfoData(prev => ({ ...prev, statusColor: c }))}
+                                className={`w-8 h-8 rounded-full border-2 transition-all hover:scale-110 active:scale-95 ${
+                                  clientInfoData.statusColor === c ? "border-primary scale-110 ring-4 ring-primary/20 shadow-lg" : "border-transparent"
+                                }`}
+                                style={{ backgroundColor: c }}
+                              />
+                            ))}
+                            
+                            <div className="w-px h-8 mx-1 bg-border/50" />
+                            
+                            {/* Custom Picker */}
+                            <div className="flex items-center gap-3 bg-background/50 pl-1 pr-3 py-1 rounded-full border border-border/30">
+                              <div className="relative w-8 h-8 rounded-full overflow-hidden border border-border/50 group shadow-inner">
+                                <input 
+                                  type="color"
+                                  value={clientInfoData.statusColor}
+                                  onChange={(e) => setClientInfoData(prev => ({ ...prev, statusColor: e.target.value }))}
+                                  className="absolute -inset-2 w-[150%] h-[150%] cursor-pointer bg-transparent border-none appearance-none"
+                                />
+                              </div>
+                              <span className="text-[10px] font-bold font-mono text-primary uppercase tracking-wider">
+                                {clientInfoData.statusColor}
+                              </span>
+                            </div>
+                          </div>
                         </div>
                       </div>
                       

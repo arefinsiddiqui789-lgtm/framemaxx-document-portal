@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { companyName, date, result, color, status } = body;
+    const { companyName, date, result, color, status, statusColor } = body;
 
     // Validate required fields
     if (!companyName || !companyName.trim()) {
@@ -34,6 +34,7 @@ export async function POST(request: NextRequest) {
             result: result?.trim() || "",
             color: color || "#000000",
             status: status?.trim() || "",
+            statusColor: statusColor || "#000000",
           }),
           redirect: "follow",
         });
