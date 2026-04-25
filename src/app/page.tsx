@@ -133,6 +133,7 @@ export default function Home() {
     statusColor: "#10B981"
   });
   const [isUpdatingClient, setIsUpdatingClient] = useState(false);
+  const [showUpdatedStatus, setShowUpdatedStatus] = useState(false);
 
   const handleClientInfoSubmit = async () => {
     if (!clientInfoData.companyName.trim()) {
@@ -150,6 +151,8 @@ export default function Home() {
 
       if (response.ok) {
         toast.success("Updated");
+        setShowUpdatedStatus(true);
+        setTimeout(() => setShowUpdatedStatus(false), 3000);
         // Optional: Reset form or leave as is
       } else {
         const data = await response.json();
@@ -1107,6 +1110,11 @@ export default function Home() {
                           <>
                             <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                             Updating...
+                          </>
+                        ) : showUpdatedStatus ? (
+                          <>
+                            <CheckCircle2 className="w-4 h-4 mr-2" />
+                            Updated
                           </>
                         ) : (
                           "Update Client Record"
