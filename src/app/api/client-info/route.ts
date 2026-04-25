@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: "Client information updated successfully.",
+      message: "Updated",
     });
   } catch (error) {
     console.error("Client info update error:", error);

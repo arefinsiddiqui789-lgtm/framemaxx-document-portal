@@ -149,7 +149,7 @@ export default function Home() {
       });
 
       if (response.ok) {
-        toast.success("Client information updated successfully!");
+        toast.success("Updated");
         // Optional: Reset form or leave as is
       } else {
         const data = await response.json();
