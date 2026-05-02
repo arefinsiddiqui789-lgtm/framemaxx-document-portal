@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
@@ -12,6 +12,10 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
+export const viewport: Viewport = {
+  themeColor: "#0D0D0D",
+};
 
 export const metadata: Metadata = {
   title: "FrameMaxx - Client Intake",
@@ -27,6 +31,13 @@ export const metadata: Metadata = {
   authors: [{ name: "FrameMaxx" }],
   icons: {
     icon: "/framemaxx-logo.png",
+    apple: "/framemaxx-logo.png",
+  },
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "FrameMaxx",
   },
   openGraph: {
     title: "FrameMaxx - Client Intake Portal",
